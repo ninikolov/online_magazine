@@ -29,6 +29,11 @@ class DBConnect {
 	function selectAllFrom($table) {
 		return $this->query ( "select * from `" . $table . "`" );
 	}
+	
+	function selectAllFromWhere($table, $where_clause) {
+		return $this->query ( "select * from `" . $table . "` where ".$where_clause );
+	}
+	
 	function selectById($table, $id, $id_column = "id") {
 		return $this->query ( "select * from `" . $table . "` where `" . $id_column . "` = " . $id );
 	}
@@ -39,7 +44,11 @@ class DBConnect {
 		}
 		$sql = rtrim ( $sql, "," ) . ") values (";
 		foreach ( array_values ( $array ) as $value ) {
-			$sql = $sql . "'" . $value . "',";
+			if ($value == "NOW()") {
+				$sql = $sql . $value . ",";
+			} else {
+				$sql = $sql . "'" . $value . "',";
+			}
 		}
 		return rtrim ( $sql, "," ) . ")";
 	}

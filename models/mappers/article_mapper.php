@@ -1,6 +1,5 @@
 <?php
 require_once 'db_connect.php';
-
 function fixEncoding($str) {
 	$junk = array (
 			"’" => "'",
@@ -23,7 +22,7 @@ class Article {
 	private $type;
 	private $writers;
 	private $featured;
-	private function getId() {
+	public function getId() {
 		return $this->id;
 	}
 	public function getTitle() {
@@ -97,14 +96,27 @@ class ArticleMapper extends DBConnect {
 			return null;
 		}
 	}
-	
 	public function submitNewArticle($data) {
-		//$article = new Article ( $data );
-		$sql = $this->_buildInsertQuery($data, "articles");
-		$this->query($sql);
+		$sql = $this->_buildInsertQuery ( $data, "articles" );
+		$this->query ( $sql );
+	}
+	public function getUserArticles($user) {
+		$result = $this->selectAllFromWhere ( "global_articles_view", "writers like '" . $user->getName () . "'" );
+		$output = [ ];
+		while ( $row = $result->fetch () ) {
+			array_push ( $output, new Article ( $row ) );
+		}
+		return $output;
+	}
+	public function likeArticle($id) {
+		$sql = "update `articles` set likes_count = likes_count + 1 where id = " . $id;
+		$this->query ( $sql );
+	}
+	
+	public function getArticleComments($id) {
+		
 	}
 }
-
 class ObjectMap {
 	public function __construct($row) {
 		// var_dump($row);

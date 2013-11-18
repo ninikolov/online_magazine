@@ -83,12 +83,14 @@
 
 <div id="article-form" title="Create new article">
   <p class="validateTips">All form fields are required.</p>
-  <form method="post" action="/IAPT1/member/submit" name="submitform" id="submitform">	
+  <form method="post" action="/IAPT1/member/submit" name="submitform" id="submitform" enctype="multipart/form-data">	
   <fieldset>
     <label for="title">Title</label>
-    <input type="text" name="article[title][]" id="title" class="text ui-widget-content ui-corner-all" />
+    <input type="text" name="article[title]" id="title" class="text ui-widget-content ui-corner-all" />
+    <label for="file">Image:</label>
+    <input type="file" name="file" id="file">
     <label for="body">Article Body</label>
-    <textarea name="article[body][]" id="body" class="text ui-widget-content ui-corner-all" rows="15" cols="50"></textarea>
+    <textarea name="article[body]" id="body" class="text ui-widget-content ui-corner-all" rows="15" cols="50"></textarea>
  </fieldset>
   </form>
 </div>

@@ -10,13 +10,18 @@ class MemberModel extends Model {
 		parent::__construct($view);
 		$this->userMapper = new UserMapper();
 		$this->articleMapper = new ArticleMapper();
+		if (isWriter()) {
+			$user = $this->userMapper->getUserByName($_SESSION['Username']);
+			$this->set ( "UserArticles",  $this->articleMapper->getUserArticles($user));
+		}
 	}
 	
 	function verifyAccountDetails($username, $password) {
-		$user = $this->userMapper->getUser($username, $password);
+		$user = $this->userMapper->getUserByAcc($username, $password);
 		if ($user) {
 			$this->set ( "UserExists", true );
 			$this->set ( "UserType", $user->getType());
+			$_SESSION["UserId"] = $user->getId();
 		} else {
 			$this->set ( "UserExists", false );
 		}

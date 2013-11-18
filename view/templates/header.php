@@ -30,6 +30,7 @@ if (! array_key_exists ( 'LoggedIn', $_SESSION )) {
 } else {
 	echo "<span>Hello " . $_SESSION ['UserType'] . " " . $_SESSION ['Username'] . "!     </span>";
 	echo "<a href=\"" . ROOT . "/member/logout\">Logout</a>";
+	echo "<a href=\"" . ROOT . "/member\">Member area</a>";
 }
 ?>
 			</div>

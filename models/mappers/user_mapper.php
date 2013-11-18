@@ -40,7 +40,7 @@ class UserMapper extends DBConnect {
 		$results = $response->fetch ();
 		return ! empty ( $results );
 	}
-	function getUser($username, $password) {
+	function getUserByAcc($username, $password) {
 		$response = $this->query ( "select * from `users` where `name` = '" . $username . "' and `password` = '" . $password . "'" );
 		$result = $response->fetch ();
 		try {
@@ -48,5 +48,18 @@ class UserMapper extends DBConnect {
 		} catch ( Exception $e ) {
 			return false;
 		}
+	}
+	function getUserByName($username) {
+		$response = $this->query ( "select * from `users` where `name` = '" . $username . "'" );
+		$result = $response->fetch ();
+		try {
+			return new User ( $result );
+		} catch ( Exception $e ) {
+			return false;
+		}
+	}
+	function userHasLiked($article_id, $user_id) {
+		$response = $this->query ( "select * from `likes` where `article_id` = '" . $article_id . "' and `user_id` = '" . $user_id . "'" );
+		return ! empty ( $response );
 	}
 }

@@ -1,6 +1,7 @@
 <?php
 // Configuration file
 require_once 'config.php';
+require_once 'util/util.php';
 session_start ();
 
 /**
@@ -93,5 +94,6 @@ function getArguments() {
 	}
 	return $extra;
 }
+
 //
 redirect ();

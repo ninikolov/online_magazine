@@ -1,5 +1,5 @@
 <?php
-if (! empty ( $_SESSION ['LoggedIn'] ) && ! empty ( $_SESSION ['Username'] )) {
+if (loggedIn()) {
 	?>
 
 <h1>Member Area</h1>

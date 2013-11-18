@@ -3,7 +3,7 @@ error_reporting ( E_ALL );
 ini_set ( 'display_errors', 'On' );
 mb_language ( 'uni' );
 mb_internal_encoding ( 'UTF-8' );
-define ( "DB_DSN", "mysql:host=localhost;dbname=cs_news" );
+define ( "DB_DSN", "mysql:host=127.0.0.1;dbname=cs_news" );
 define ( "DB_USERNAME", "root" );
 define ( "DB_PASSWORD", "" );
 
@@ -15,4 +15,13 @@ define ( 'ROOT', "/" . end ( $expl ) );
 define ( "CSS_PATH", ROOT . "/css" );
 define ( "IMAGE_PATH", ROOT . "/images" );
 define ( "JS_PATH", ROOT . "/js" );
+
+define ("SUBSCRIBER", "subscriber");
+define ("WRITER", "writer");
+define ("EDITOR", "editor");
+define ("PUBLISHER", "publisher");
+
+define ("SUBSCRIBERS", serialize(array(SUBSCRIBER, WRITER, EDITOR, PUBLISHER)));
+define ("WRITERS", serialize(array(WRITER, EDITOR, PUBLISHER)));
+define ("EDITORS", serialize(array(EDITOR, PUBLISHER)));
 
