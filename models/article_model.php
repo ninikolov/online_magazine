@@ -16,10 +16,14 @@ class ArticleModel extends Model {
 	}
 	
 	function fetchArticleById($id) {		
-		$this->set ( "Article", $this->mapper->getArticle($id));
+		$article = $this->mapper->getArticle($id);
+		if ($article->getType()== "column_article") {
+			$this->set("Column", $this->mapper -> getColumnOfArticle($id));
+		}
+		$this->set ( "Article", $article);
 		$this->set ( "Comments", $this->commentMapper->getCommentsByArticleId($id));
 		if(isSubscriber()) {			
-			$this->set("CanLike", !$this->userMapper->userHasLiked($id, $_SESSION ['Username']));
+			$this->set("CanLike", !$this->userMapper->userHasLiked($id, $_SESSION ['UserId']));
 			//$this->set("CanComment", true);
 		} else {
 			$this->set("CanLike", false);

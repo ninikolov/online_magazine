@@ -29,11 +29,9 @@ class DBConnect {
 	function selectAllFrom($table) {
 		return $this->query ( "select * from `" . $table . "`" );
 	}
-	
 	function selectAllFromWhere($table, $where_clause) {
-		return $this->query ( "select * from `" . $table . "` where ".$where_clause );
+		return $this->query ( "select * from `" . $table . "` where " . $where_clause );
 	}
-	
 	function selectById($table, $id, $id_column = "id") {
 		return $this->query ( "select * from `" . $table . "` where `" . $id_column . "` = " . $id );
 	}
@@ -51,5 +49,14 @@ class DBConnect {
 			}
 		}
 		return rtrim ( $sql, "," ) . ")";
+	}
+	function lastInsertId() {
+		return $this->_database->lastInsertId ();
+	}
+	function responseIsEmpty($response) {
+		if ($response->rowCount () > 0) {
+			return false;
+		}
+		return true;
 	}
 }

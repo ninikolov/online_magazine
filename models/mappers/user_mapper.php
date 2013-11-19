@@ -60,6 +60,24 @@ class UserMapper extends DBConnect {
 	}
 	function userHasLiked($article_id, $user_id) {
 		$response = $this->query ( "select * from `likes` where `article_id` = '" . $article_id . "' and `user_id` = '" . $user_id . "'" );
-		return ! empty ( $response );
+		return !$this->responseIsEmpty($response);
+	}
+	function getAllWriters() {
+		$result = $this->selectAllFrom ( "writers_list_view" );
+		$output = [ ];
+		while ( $row = $result->fetch () ) {
+			array_push ( $output, new User ( $row ) );
+		}
+		return $output;
+	}
+	function getAllOtherWriters() {
+		$writers = $this->getAllWriters ();
+		foreach ( $writers as $key => $writer ) {
+			if ($writer->getName () == $_SESSION ['Username']) {
+				unset ( $writers [$key] );
+				return $writers;
+			}
+		}
+		return $writers;
 	}
 }

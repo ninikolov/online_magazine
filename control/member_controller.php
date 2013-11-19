@@ -8,25 +8,41 @@ class MemberController extends Controller {
 		$this->setTemplate ( "templates/login.php" );
 	}
 	function submit() {
-		/* $title = $_POST ['title'];
-		$body = $_POST ['body'];
-		$this->_model->submitArticle ( array (
-				"title" => $title,
-				'body' => $body 
-		) ); */
+		$abs_path = "";
+		if ($_FILES ["file"] ["error"] > 0) {
+			echo "Error: " . $_FILES ["file"] ["error"] . "<br>";
+		} else {
+			$abs_path = $abs_path . getcwd () . "\\article_img\\" . $_FILES ["file"] ["name"];
+			if (file_exists ( $abs_path )) {
+				echo $_FILES ["file"] ["name"] . " already exists. ";
+			} else {
+				move_uploaded_file ( $_FILES ["file"] ["tmp_name"], $abs_path );
+			}
+		}
+		$rel_path = ROOT . "/article_img/" . $_FILES ["file"] ["name"];
 		
-		if ($_FILES["file"]["error"] > 0)
-		{
-			echo "Error: " . $_FILES["file"]["error"] . "<br>";
+		$data = $_POST ['article'];
+		if (array_key_exists ( "writer", $data )) {
+			array_push ( $data ["writer"], $_SESSION ['UserId'] );
+		} else {
+			$data ["writer"] = array (
+					$_SESSION ['UserId'] 
+			);
 		}
-		else
-		{
-			echo "Upload: " . $_FILES["file"]["name"] . "<br>";
-			echo "Type: " . $_FILES["file"]["type"] . "<br>";
-			echo "Size: " . ($_FILES["file"]["size"] / 1024) . " kB<br>";
-			echo "Stored in: " . $_FILES["file"]["tmp_name"];
+		
+		$data ["image_path"] = $rel_path;
+		var_dump ( $data );
+		if ($data ["type"] == "review") {
+			unset ( $data ["column_article"] );
+			$this->_model->submitReview ( $data );
+		} elseif ($data ["type"] == "column_article") {
+			unset ( $data ["rating"] );
+			$this->_model->submitColumnArticle ( $data );
+		} else {
+			unset ( $data ["rating"] );
+			unset ( $data ["column_article"] );
+			$this->_model->submitArticle ( $data );
 		}
-		echo var_dump($_POST ['article']);
 	}
 	function login() {
 		$this->setTemplate ( "templates/login.php" );

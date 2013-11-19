@@ -6,8 +6,15 @@
 	/*
 	 * if ($Article == null) { echo "<meta http-equiv='refresh' content='0;" . ROOT . "' >"; }
 	 */
+	echo "<img src=\"" . $Article->getImage () . "\">";
 	echo "<h2>" . $Article->getTitle () . "</h2>";
+	echo "<p>" . $Article->getType () . "</p>";
+	if ($Article->getType () == "column") {
+		echo "<p>" . $Column . "</p>";
+	}
 	echo "<p>" . $Article->getBody () . "</p>";
+	echo "<p>" . $Article->getKeyWords () . "</p>";
+	echo "<p>" . $Article->getWriter () . "</p>";
 	echo "<p>" . "Likes: " . $Article->getLikesCount () . "</p>";
 	if (isSubscriber ()) {
 		if ($CanLike) {
@@ -38,4 +45,5 @@
 <?php
 	} else {
 	}
+	
 	
