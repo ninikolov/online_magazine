@@ -10,8 +10,9 @@ An array of paths => controllers.
 $controllers = array (
 		'Article' => 'ArticleController',
 		'Home' => 'HomeController',
-		'member' => 'MemberController' , 
-		'write' => 'WriteController'
+		'Member' => 'MemberController' , 
+		'Write' => 'WriteController', 
+		'Latest' => 'LatestController'
 );
 /**
  * The main method of the website, it redirects all calls 

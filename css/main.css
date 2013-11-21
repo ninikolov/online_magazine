@@ -19,30 +19,112 @@ body {
 #topbar {
 	width: 1000px;
 	height: 40px;
+	margin-bottom: 15px;
+	-webkit-border-bottom-left-radius: 15px;
+	-webkit-border-bottom-right-radius: 15px;
+	-moz-box-shadow: 1px 1px 1px 1px #ccc;
+	-webkit-box-shadow: 1px 1px 1px 1px #ccc;
+	display: inline-block;
 }
 
 header {
 	margin-left: auto;
 	margin-right: auto;
 	width: 1000px;
-	height: 120px;
-	background-color: #8DC63F;
+	height: 97px;
+}
+
+#logo {
+	-webkit-filter: drop-shadow(12px 12px 25px rgba(0, 0, 0, 0.7));
 }
 
 h1 {
-	margin: 1em 0 0.5em 0;
 	color: #343434;
 	font-weight: normal;
-	font-size: 30px;
-	line-height: 40px;
+	font-size: 21px;
+	margin-left: 20px;
+	margin-top: 0px;
+}
+
+header h2 {
 	display: inline;
-	margin-left: 100px;
+	margin-left: 49px;
+	font-size: 23px;
+	margin-top: 0px;
+	font-family: "Calisto MT", "Bookman Old Style", Bookman,
+		"Goudy Old Style", Garamond, "Hoefler Text", "Bitstream Charter",
+		Georgia, serif;
+	text-shadow: 1px 1px 2px rgba(150, 150, 150, 1);
+	font-style: normal
+}
+
+.hr {
+	color: green;
 }
 
 nav {
 	width: 1000px;
-	background-color: #5A8039;
-	height: 35px;
+	height: 30px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	margin: 0;
+}
+
+nav ul li {
+	float: left;
+	display: block;
+	position: relative;
+	margin: 0 1px;
+	font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode",
+		"Lucida Sans", Tahoma, sans-serif;
+}
+
+nav ul li a {
+	padding: 0px 9px 0 5px;
+	/* text-decoration: overline; */
+	color: #5A8039;
+	text-decoration: none;
+}
+
+}
+nav ul li a:hover {
+	color: #fff;
+}
+
+nav ul li a:selected {
+	color: #f00;
+}
+
+nav ul li ul {
+	position: absolute;
+	left: 0;
+	display: none;
+	margin: 0 0 0 -1px;
+	padding: 0;
+	list-style: none;
+	border-left: 1px solid #5A8039;
+	border-right: 1px solid #5A8039;
+	border-bottom: 4px solid #5A8039;
+	background-color: #E1E1E1;
+	z-index: 999;
+}
+
+nav ul li ul li {
+	width: 100px;
+	float: left;
+	/* border-top: 1px solid #5A8039; */
+}
+
+nav ul li ul a {
+	display: block;
+	height: 15px;
+	padding: 8px 5px;
+	color: #666;
+}
+
+nav ul li ul a:hover {
+	text-decoration: underline;
 }
 
 #logo {
@@ -59,21 +141,127 @@ nav {
 	-moz-box-shadow: 3px 3px 5px 6px #ccc;
 	-webkit-box-shadow: 3px 3px 5px 6px #ccc;
 	box-shadow: 3px 3px 5px 6px #ccc;
-	background: #fcfff4; /* Old browsers */
+	background: #fcfff4;
 	background: -moz-linear-gradient(top, #fcfff4 70%, #f2f4f4 100%);
-	/* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(70%, #fcfff4),
-		color-stop(100%, #f2f4f4)); /* Chrome,Safari4+ */
+		color-stop(100%, #f2f4f4)); /
 	background: -webkit-linear-gradient(top, #fcfff4 70%, #f2f4f4 100%);
-	/* Chrome10+,Safari5.1+ */
 	background: -o-linear-gradient(top, #fcfff4 70%, #f2f4f4 100%);
-	/* Opera 11.10+ */
 	background: -ms-linear-gradient(top, #fcfff4 70%, #f2f4f4 100%);
-	/* IE10+ */
 	background: linear-gradient(to bottom, #fcfff4 70%, #f2f4f4 100%);
-	/* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient(  startColorstr='#fcfff4',
-		endColorstr='#f2f4f4', GradientType=0); /* IE6-9 */
+	filter: progid:DXImageTransform.Microsoft.gradient(                  startColorstr='#fcfff4',
+		endColorstr='#f2f4f4', GradientType=0);
+}
+
+.contents h1,.slider h1 {
+	font-weight: normal;
+	font-size: 20px;
+	color: white;
+	font-family: Georgia, "Times New Roman", Serif;
+}
+
+.slider h1,.slider h2 {
+	text-shadow: 1px 1px 4px rgba(150, 150, 150, 1);
+}
+
+.slider h2 {
+	font-family: Georgia, "Times New Roman", Serif;
+	font-weight: normal;
+	font-size: 15px;
+	color: white
+}
+
+footer {
+	text-align: center;
+	margin-top: 15px;
+}
+
+.slider {
+	width: 980px;
+	height: 400px;
+	margin-bottom: 20px;
+	background-color: rgba(255, 255, 255, 0.25);
+	border-bottom: 3px solid #5A8039;
+}
+
+.slider #headline {
+	max-width: 385px;
+	float: left;
+	margin-right: 5px;
+	position: relative;
+}
+
+.small_thumbnail {
+	float: left;
+	/* width: 300px;
+	height: 270px; */
+	position: relative;
+}
+
+.slider {
+	padding: 10px
+}
+
+.slider .text {
+	position: absolute;
+}
+
+.slider #other_articles {
+	width: 509px;
+	float: left;
+	padding-left: 5px;
+	border-left: 1px solid #5A8039;
+}
+
+.slider #top {
+	width: 584px;
+	height: 195px;
+}
+
+.slider #bottom {
+	width: 586px;
+	height: 195px;
+	margin-top: 10px;
+}
+
+.sidebar_image {
+	max-width: 100%;
+	max-height: 100%;
+	/* margin: 10px; */
+}
+
+#featured {
+	font-family: Georgia, "Times New Roman", Serif;
+	width: 470px;
+	
+}
+
+#featured ul li a, #recent_cat ul li a {
+	text-decoration: none;
+	font-size: 16px;
+	color: #5A8039;
+}
+
+#featured ul,  #recent_cat ul{
+	list-style: none;
+	margin: 0;
+	padding: 1px;
+}
+
+#recent_cat  {
+	width: 470px;
+}
+
+.ui-button-text {
+   font-size: inherit !important;
+} 
+
+#radio {
+	width: auto;
+}
+
+textarea {
+	resize: none;
 }
 
 .color1 {
@@ -116,26 +304,32 @@ nav {
 	color: #FFFFFF
 }
 
-footer {
-	text-align: center;
-	margin-top: 15px;
-}
-
-.slider {
-	width: 1000px;
-}
-
-textarea {
-    resize: none;
-}
-
 /*****************************************************/
 
 /* body { font-size: 62.5%; } */
-    label, input { display:block; }
-    input.text { margin-bottom:12px; width:95%; padding: .4em; }
-    fieldset { padding:0; border:0; margin-top:25px; }
-   /*  h1 { font-size: 1.2em; margin: .6em 0; } */
-    .ui-dialog .ui-state-error { padding: .3em; }
-    .validateTips { border: 1px solid transparent; padding: 0.3em; }
-    
+label,input {
+	display: block;
+}
+
+input.text {
+	margin-bottom: 12px;
+	width: 95%;
+	padding: .4em;
+}
+
+fieldset {
+	padding: 0;
+	border: 0;
+	margin-top: 25px;
+}
+/*  h1 { font-size: 1.2em; margin: .6em 0; } */
+.ui-dialog .ui-state-error {
+	padding: .3em;
+}
+
+.validateTips {
+	border: 1px solid transparent;
+	padding: 0.3em;
+}
+
+

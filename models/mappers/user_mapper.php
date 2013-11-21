@@ -38,7 +38,7 @@ class UserMapper extends DBConnect {
 	function validUser($username, $password) {
 		$response = $this->query ( "select * from `users` where `name` = '" . $username . "' and `password` = '" . $password . "'" );
 		$results = $response->fetch ();
-		return ! empty ( $results );
+		return ! $this->responseIsEmpty ( $results );
 	}
 	function getUserByAcc($username, $password) {
 		$response = $this->query ( "select * from `users` where `name` = '" . $username . "' and `password` = '" . $password . "'" );
@@ -79,5 +79,23 @@ class UserMapper extends DBConnect {
 			}
 		}
 		return $writers;
+	}
+	
+	function getAllNonPublisherUsers() {
+		$result = $this->selectAllFrom ( "non_publisher_users_view" );
+		$output = [ ];
+		while ( $row = $result->fetch () ) {
+			array_push ( $output, new User ( $row ) );
+		}
+		return $output;
+	}
+	
+	function promoteUserType($user_id, $new_type) {
+		$sql = $this->_buildUpdateQuery(array(
+			"type" => $new_type
+		), "users", array(
+			"id" => $user_id
+		));
+		$this-> query($sql);
 	}
 }

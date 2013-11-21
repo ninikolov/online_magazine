@@ -6,7 +6,13 @@
 	/*
 	 * if ($Article == null) { echo "<meta http-equiv='refresh' content='0;" . ROOT . "' >"; }
 	 */
-	echo "<img src=\"" . $Article->getImage () . "\">";
+	if (isEditor () && $Article->getStatus () == "submitted") {
+		echo "<a href=\"" . ROOT . "/article/toggle_review/" . $Article->getId () . "\">Set to under review</a>";
+	} elseif (isEditor () && $Article->getStatus () == "under_review") {
+		require_once 'edit_form.php';
+		require_once 'article_status_form.php';
+	}
+	echo "<img src=\"" . ROOT . $Article->getImage () . "\">";
 	echo "<h2>" . $Article->getTitle () . "</h2>";
 	echo "<p>" . $Article->getType () . "</p>";
 	if ($Article->getType () == "column") {

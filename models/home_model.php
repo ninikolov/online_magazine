@@ -8,10 +8,10 @@ class HomeModel extends Model {
 	function __construct($view) {
 		parent::__construct($view);
 		$this->mapper = new ArticleMapper();
-		$this->set ( "Map", $this->getArticles() );
-	}
-	
-	function getArticles() {
-		return $this->mapper->fetchAll();
+		$this->set ( "PopularArticles", $this->mapper->fetchPopularArticles() );
+		$this->set ( "FeaturedArticles", $this->mapper->fetchFeaturedArticles() );
+		$this->set ( "LatestArticles", $this->mapper->fetchLatestFiveArticles() );
+		$this->set ( "LatestColumnArticles", $this->mapper->fetchLatestFiveColunArticles() );
+		$this->set ( "LatestReviews", $this->mapper->fetchLatestFiveReviews() );
 	}
 }

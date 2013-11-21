@@ -47,23 +47,13 @@
       }
     }
  
-/*     function checkRegexp( o, regexp, n ) {
-      if ( !( regexp.test( o.val() ) ) ) {
-        o.addClass( "ui-state-error" );
-        updateTips( n );
-        return false;
-      } else {
-        return true;
-      }
-    } */
- 
-    $( "#article-form" ).dialog({
+    $( "#article-edit-form" ).dialog({
       autoOpen: false,
       height: 700,
       width: 900,
       modal: true,
       buttons: {
-        "Submit article": function() {
+        "Update article": function() {
           var bValid = true;
           allFields.removeClass( "ui-state-error" );
  			
@@ -84,10 +74,10 @@
       }
     });
  
-    $( "#create-article" )
+    $( "#edit-article" )
       .button()
       .click(function() {
-        $( "#article-form" ).dialog( "open" );
+        $( "#article-edit-form" ).dialog( "open" );
       });
 
     $("#column_article").change(function(){
@@ -107,19 +97,40 @@
   });
   </script>
 
-<div id="article-form" title="Create new article">
+<?php
+function selectOption($value, $target) {
+	if ($value == $target) {
+		return "submitted";
+	}
+}
+
+?>
+
+<div id="article-edit-form" title="Edit article">
 	<p class="validateTips">All form fields are required.</p>
-	<form method="post" action="/IAPT1/member/submit" name="submitform"
-		id="submitform" enctype="multipart/form-data">
+	<form method="post"
+		action="<?php echo ROOT. "/member/edit/".$Article -> getId() ?>"
+		name="editform" id="submitform" enctype="multipart/form-data">
 		<fieldset>
 			<label for="title">Title</label> <input type="text"
 				name="article[title]" id="title"
-				class="text ui-widget-content ui-corner-all" /> <label for="file">Image:</label>
-			<input type="file" name="file" id="file"> <label for="type">Article
-				Type:</label> <select name="article[type]" id="column_article">
-				<option value="article">Article</option>
-				<option value="column_article">Column Article</option>
-				<option value="review">Review</option>
+				class="text ui-widget-content ui-corner-all"
+				<?php echo "value=\"".$Article->getTitle(). "\"" ?> /> <label
+				for="file">Image:</label> <input type="file" name="file" id="file">
+			<label for="type">Article Type:</label> <select name="article[type]"
+				id="column_article">
+				<option value="article"
+					<?php
+					selectOption ( "article", $Article->getType () )?>>Article</option>
+				<option value="column_article"
+					<?php
+					
+					selectOption ( "column_article", $Article->getType () )?>>Column
+					Article</option>
+				<option value="review"
+					<?php
+					
+					selectOption ( "review", $Article->getType () )?>>Review</option>
 			</select> <label for="column" class="column_select">Column:</label> <select
 				name="article[column_article]" class="column_select">
 				<option value="technology">Technology</option>
@@ -145,9 +156,10 @@
 			?>
 	</select> <label for="body">Article Body</label>
 			<textarea name="article[body]" id="body"
-				class="text ui-widget-content ui-corner-all" rows="15" cols="50"></textarea>
+				class="text ui-widget-content ui-corner-all" rows="15" cols="50"><?php echo $Article->getBody() ?></textarea>
 		</fieldset>
 	</form>
 </div>
 
-<button id="create-article">Create a new article</button>
+<button id="edit-article">Edit article</button>
+

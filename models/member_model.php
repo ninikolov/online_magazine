@@ -16,6 +16,10 @@ class MemberModel extends Model {
 			$submitted_articles = $this->articleMapper->fetchAllSubmitted();
 			$this->set("SubmittedArticles", $submitted_articles);
 		}
+		if (isPublisher()) {
+			$non_publishers = $this->userMapper->getAllNonPublisherUsers();
+			$this->set("NonPublishers", $non_publishers);
+		}
 	}
 	function verifyAccountDetails($username, $password) {
 		$user = $this->userMapper->getUserByAcc ( $username, $password );
@@ -35,6 +39,25 @@ class MemberModel extends Model {
 	}
 	function submitColumnArticle($data) {
 		$this->articleMapper->submitColumnArticle ( $data );
+	}
+	function updateArticle($data) {
+		$article_id = $data["id"];
+		unset($data["id"]);
+		$this->articleMapper->updateArticle ( $data , $article_id);
+	}
+	function updateReview($data) {
+		$article_id = $data["id"];
+		unset($data["id"]);
+		$this->articleMapper->updateReview ( $data , $article_id);
+	}
+	function updateColumnArticle($data) {
+		$article_id = $data["id"];
+		unset($data["id"]);
+		$this->articleMapper->updateColumnArticle ( $data , $article_id);
+	}
+	
+	function promoteUser($user, $new_type) {
+		$this-> userMapper -> promoteUserType($user, $new_type) ;
 	}
 	
 }

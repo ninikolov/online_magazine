@@ -1,41 +1,43 @@
 <?php
-
 require_once 'models/model.php';
 require_once 'mappers/article_mapper.php';
 require_once 'mappers/comment_mapper.php';
 require_once 'mappers/user_mapper.php';
-
 class ArticleModel extends Model {
-	
-
-	function __construct($view){
-		parent::__construct($view);
-		$this->mapper = new ArticleMapper();
-		$this->commentMapper = new CommentMapper();
-		$this->userMapper = new UserMapper();
+	function __construct($view) {
+		parent::__construct ( $view );
+		$this->mapper = new ArticleMapper ();
+		$this->commentMapper = new CommentMapper ();
+		$this->userMapper = new UserMapper ();
 	}
-	
-	function fetchArticleById($id) {		
-		$article = $this->mapper->getArticle($id);
-		if ($article->getType()== "column_article") {
-			$this->set("Column", $this->mapper -> getColumnOfArticle($id));
+	function fetchArticleById($id) {
+		$article = $this->mapper->getArticle ( $id );
+		if ($article->getType () == "column_article") {
+			$this->set ( "Column", $this->mapper->getColumnOfArticle ( $id ) );
 		}
-		$this->set ( "Article", $article);
-		$this->set ( "Comments", $this->commentMapper->getCommentsByArticleId($id));
-		if(isSubscriber()) {			
-			$this->set("CanLike", !$this->userMapper->userHasLiked($id, $_SESSION ['UserId']));
-			//$this->set("CanComment", true);
+		$this->set ( "Article", $article );
+		$this->set ( "Comments", $this->commentMapper->getCommentsByArticleId ( $id ) );
+		if (isSubscriber ()) {
+			$this->set ( "CanLike", ! $this->userMapper->userHasLiked ( $id, $_SESSION ['UserId'] ) );
+			// $this->set("CanComment", true);
 		} else {
-			$this->set("CanLike", false);
-			//$this->set("CanComment", false);
+			$this->set ( "CanLike", false );
+			// $this->set("CanComment", false);
+		}
+		if (isEditor ()) {
+			$this->set ( "WriterList", $this->userMapper->getAllOtherWriters () );
 		}
 	}
-	
 	function likeArticle($id) {
-		$this->mapper ->likeArticle($id);		
+		$this->mapper->likeArticle ( $id );
 	}
-	
 	function submitComment($comment) {
-		$this->commentMapper->submitComment($comment);
+		$this->commentMapper->submitComment ( $comment );
+	}
+	function setUnderReview($article_id) {
+		$this->mapper->setUnderReview ( $article_id );
+	}
+	function updateStatus($article_id, $status) {
+		$this->mapper->updateArticleStatus ( $article_id, $status );
 	}
 }

@@ -17,38 +17,64 @@ class DBConnect {
 	function disconnect() {
 		$this->_database = null;
 	}
-	function query($sql) {
+	function query($sql, $input_parameters = array()) {
 		try {
 			$stmt = $this->_database->prepare ( $sql );
-			$stmt->execute ();
+			//var_dump($input_parameters);
+			if (! empty ( $input_parameters )) {
+				$stmt->execute ( $input_parameters );
+				//echo $stmt->queryString;
+			} else {
+				$stmt->execute ();
+			}
 			return $stmt;
 		} catch ( PDOException $e ) {
 			echo $e->getMessage ();
 		}
 	}
 	function selectAllFrom($table) {
-		return $this->query ( "select * from `" . $table . "`" );
+		return $this->query ( "select * from " . $table );
 	}
-	function selectAllFromWhere($table, $where_clause) {
-		return $this->query ( "select * from `" . $table . "` where " . $where_clause );
+	function selectAllFromWhere($table, $where_clause, $input_parameters = array()) {
+		return $this->query ( "select * from `" . $table . "` where " . $where_clause, $input_parameters );
 	}
 	function selectById($table, $id, $id_column = "id") {
-		return $this->query ( "select * from `" . $table . "` where `" . $id_column . "` = " . $id );
+		return $this->query ( "select * from `" . $table . "` where `" . $id_column . "` = :id", array (
+				":id" => $id 
+		) );
 	}
 	function _buildInsertQuery($array, $table) {
 		$sql = "insert into " . $table . " (";
+		$sql_keys = array();
 		foreach ( array_keys ( $array ) as $column ) {
 			$sql = $sql . " " . $column . ",";
+			array_push($sql_keys, ":".$column);
 		}
 		$sql = rtrim ( $sql, "," ) . ") values (";
-		foreach ( array_values ( $array ) as $value ) {
-			if ($value == "NOW()") {
+		foreach ( array_keys ( $array ) as $column ) {
+			/* if ($value == "NOW()") {
 				$sql = $sql . $value . ",";
-			} else {
-				$sql = $sql . "'" . $value . "',";
-			}
+			} else { */
+				$sql = $sql . ":" . $column . ",";
+			/* } */
 		}
-		return rtrim ( $sql, "," ) . ")";
+		$input_params = array_combine(array_values($sql_keys), array_values($array));
+		$sql =  rtrim ( $sql, "," ) . ")";
+		echo $sql;
+		var_dump($input_params);
+		$this->query($sql, $input_params); 
+	}
+	function _buildUpdateQuery($array, $table, $where) {
+		$sql = "update " . $table . " set ";
+		foreach ( $array as $column => $value ) {
+			$sql = $sql . $column . "='" . $value . "',";
+		}
+		$sql = rtrim ( $sql, "," ) . " where ";
+		foreach ( $where as $column => $value ) {
+			$sql = $sql . $column . "='" . $value . "',";
+		}
+		echo $sql;
+		return rtrim ( $sql, "," ) . ";";
 	}
 	function lastInsertId() {
 		return $this->_database->lastInsertId ();
