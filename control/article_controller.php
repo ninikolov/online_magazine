@@ -18,7 +18,7 @@ class ArticleController extends Controller {
 		// echo $body;
 		$data = array (
 				"id" => null,
-				"date" => "NOW()",
+				"date" => date ( 'Y-m-d H:i:s' ),
 				"user_id" => $_SESSION ['UserId'],
 				"body" => $body,
 				"articles_id" => $id 

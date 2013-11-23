@@ -1,8 +1,6 @@
 <?php
 class View {
 	protected $_variables = array ();
-	private $_model;
-	private $_controller;
 	protected $_template;
 	
 	public function set($name, $value) {

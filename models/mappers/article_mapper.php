@@ -1,102 +1,37 @@
 <?php
 require_once 'db_connect.php';
-function fixEncoding($str) {
-	$junk = array (
-			"’" => "'",
-			"“" => "\"",
-			"”" => "\"" 
-	);
-	foreach ( $junk as $key => $value ) {
-		$str = str_replace ( $key, $value, $str );
-	}
-	return mb_convert_encoding ( $str, 'UTF-8', 'UTF-8' );
-}
-
+require_once 'article.class.php';
 /**
- *
- * @author
- *
- *
+ * Provides a mapping for creating and updating article data. 
  */
-class Article {
-	private $id;
-	private $title;
-	private $body;
-	private $image_path;
-	private $likes_count;
-	private $keywords;
-	private $date;
-	private $status;
-	private $type;
-	private $writers;
-	private $featured;
-	public function getId() {
-		return $this->id;
-	}
-	public function getTitle() {
-		return $this->title;
-	}
-	public function getBody() {
-		return $this->body;
-	}
-	public function getImage() {
-		return $this->image_path;
-	}
-	public function getLikesCount() {
-		return $this->likes_count;
-	}
-	public function getKeyWords() {
-		return $this->keywords;
-	}
-	public function getDate() {
-		return $this->date;
-	}
-	public function getStatus() {
-		return $this->status;
-	}
-	public function getWriter() {
-		return $this->writers;
-	}
-	function getType() {
-		return $this->type;
-	}
-	function getFeatured() {
-		return $this->featured;
-	}
-	public function __construct($row) {
-		// var_dump($row);
-		$class_vars = get_class_vars ( get_class ( $this ) );
-		// var_dump($class_vars);
-		foreach ( array_keys ( $class_vars ) as $value ) {
-			if (array_key_exists ( $value, $row )) {
-				$this->$value = fixEncoding ( $row [$value] );
-			} else {
-				throw new ArticleException ( "No row " . $value . " returned from query or wrong article model." );
-			}
-		}
-	}
-}
-class ArticleException extends Exception {
-}
 class ArticleMapper extends DBConnect {
 	function __construct() {
 		$this->connect ();
 	}
-	private function _mapResultsToArticles($result) {
+	
+	// Internal
+	/**
+	 * 
+	 * @param unknown $result
+	 * @param string $class
+	 * @return multitype:
+	 */
+	private function _mapResultsToArticles($result, $class = "Article") {
 		$output = [ ];
 		while ( $row = $result->fetch () ) {
-			array_push ( $output, new Article ( $row ) );
+			array_push ( $output, new $class ( $row ) );
 		}
 		return $output;
 	}
 	
 	// GET methods
-	public function fetchAll($table = "global_articles_view") {
+	public function fetchAll($table = "global_articles_view", $class = "Article") {
 		$result = $this->selectAllFrom ( $table );
-		/*
-		 * $output = [ ]; while ( $row = $result->fetch () ) { array_push ( $output, new Article ( $row ) ); } return $output;
-		 */
-		return $this->_mapResultsToArticles ( $result );
+		return $this->_mapResultsToArticles ( $result, $class );
+	}
+	public function fetchAllWhere($where_clause, $table = "global_articles_view", $class = "Article") {
+		$result = $this->selectAllFromWhere ( $table, $where_clause );
+		return $this->_mapResultsToArticles ( $result, $class );
 	}
 	function fetchAllSubmitted() {
 		return $this->fetchAll ( "submitted_articles_view" );
@@ -116,12 +51,35 @@ class ArticleMapper extends DBConnect {
 	function fetchLatestFiveColunArticles() {
 		return $this->fetchAll ( "latest_column_articles_view" );
 	}
+	function fetchAllColumnArticles($column) {
+		$result = $this->selectAllFromWhere ( "global_column_articles_view", "column_name=:column_name", array (
+				":column_name" => $column 
+		) );
+		return $this->_mapResultsToArticles ( $result, "Column" );
+	}
+	function fetchAllReviews() {
+		return $this->fetchAll ( "global_reviews_view", "Review" );
+	}
 	public function getArticle($id) {
 		$response = $this->selectById ( "global_articles_view", $id );
 		try {
 			$ar = $response->fetch ();
-			return new Article ( $ar );
-		} catch ( ArticleException $e ) {
+			switch ($ar ["type"]) {
+				case "column_article" :
+					$ar ['column_name'] = $this->getColumnOfArticle ( $id );
+					return new Column ( $ar );
+					break;
+				
+				case "review" :
+					$ar ['rating'] = $this->getRatingOfArticle ( $id );
+					return new Review ( $ar );
+					break;
+				
+				default :
+					return new Article ( $ar );
+					break;
+			}
+		} catch ( Exception $e ) {
 			return null;
 		}
 	}
@@ -129,59 +87,118 @@ class ArticleMapper extends DBConnect {
 		$result = $this->selectAllFromWhere ( "global_articles_view", "writers like :wname", array (
 				":wname" => $user->getName () 
 		) );
-		$output = [ ];
-		while ( $row = $result->fetch () ) {
-			array_push ( $output, new Article ( $row ) );
-		}
-		return $output;
+		return $this->_mapResultsToArticles ( $result );
 	}
 	function getColumnOfArticle($article_id) {
-		$result = $this->selectAllFrom ( "column_article" );
+		$result = $this->selectAllFromWhere ( "column_article", "article_id=:article_id", array (
+				":article_id" => $article_id 
+		) );
 		$row = $result->fetch ();
 		return $row ["column_name"];
+	}
+	function getRatingOfArticle($article_id) {
+		$result = $this->selectAllFromWhere ( "ratings", "article_id=:article_id", array (
+				":article_id" => $article_id 
+		) );
+		$row = $result->fetch ();
+		return $row ["rating"];
+	}
+	function getEditHistoryOf($user_id) {
+		$result = $this->selectAllFromWhere ( "edits_view", "user_id=:user_id", array (
+				":user_id" => $user_id 
+		) );
+		return $this->_mapResultsToArticles ( $result );
 	}
 	
 	// SUBMIT or UPDATE methods
 	public function submitNewArticle($data) {
 		$writers = $data ["writer"];
-		$keywords = $data ["keywords"];
+		$keywords;
+		if (! empty ( $data ["keywords"] )) {
+			$keywords = $data ["keywords"];
+		}
 		unset ( $data ["writer"] );
 		unset ( $data ["keywords"] );
-		/* $sql =  */$this->_buildInsertQuery ( $data, "articles" );
-		/* echo $sql;*/
+		if (! $this->_buildInsertQuery ( $data, "articles" )) {
+			throw new ArticleMapperException ();
+		}
+		/* echo $sql; */
 		/* $this->query ( $sql );  */
 		$article_id = $this->lastInsertId ();
-		$this->_submitContentKeywordData ( $article_id, $keywords );
+		if (! empty ( $keywords )) {
+			$this->_submitContentKeywordData ( $article_id, $keywords );
+		}
 		$this->_submitContentWriterData ( $article_id, $writers );
 		return $article_id;
 	}
 	function updateArticle($data, $article_id) {
-		// $keywords = $data ["keywords"];
-		// unset ( $data ["keywords"] );
 		var_dump ( $data );
-		$sql = $this->_buildUpdateQuery ( $data, "articles", array (
+		if (! empty ( $data ["keywords"] )) {
+			$keywords = $data ["keywords"];
+		}
+		unset ( $data ["keywords"] );
+		$writers = $data ["writer"];
+		unset ( $data ["writer"] );
+		if (! $this->_buildUpdateQuery ( $data, "articles", array (
 				"id" => $article_id 
-		) );
-		echo $sql;
-		$this->query ( $sql );
+		) )) {
+			throw new ArticleMapperException ();
+		}
+		$this->deleteKeywords ( $article_id );
+		$this->deleteWriters ( $article_id );
+		if (! empty ( $keywords )) {
+			$this->_submitContentKeywordData ( $article_id, $keywords );
+		}
+		$this->_submitContentWriterData ( $article_id, $writers );
+		$this->_storeEditInformation ( $article_id, $_SESSION ["UserId"] );
 		return $article_id;
+	}
+	private function _storeEditInformation($article_id, $editor_id) {
+		$this->_buildInsertQuery ( array (
+				"article_id" => $article_id,
+				"user_id" => $editor_id,
+				"date_edited" => date ( 'Y-m-d H:i:s' ) 
+		), "article_edits", array (
+				"date_edited" => ":date_edited" 
+		) );
+	}
+	private function deleteWriters($article_id) {
+		$this->deleteStatement ( "article_writers", array (
+				"article_id" => $article_id 
+		) );
+	}
+	private function deleteKeywords($article_id) {
+		$this->deleteStatement ( "article_keywords", array (
+				"article_id" => $article_id 
+		) );
 	}
 	function updateColumnArticle($data, $article_id) {
 		$column = $data ["column_article"];
 		unset ( $data ["column_article"] );
 		$article_id = $this->updateArticle ( $data, $article_id );
+		$this->_buildInsertQuery ( array (
+				"article_id" => $article_id,
+				"column_name" => $column 
+		), "column_article", array (
+				"column_name" => ":column_name" 
+		) );
 	}
 	function updateReview($data, $article_id) {
 		$rating = $data ["rating"];
 		unset ( $data ["rating"] );
 		$article_id = $this->updateArticle ( $data, $article_id );
+		$this->_buildInsertQuery ( array (
+				"article_id" => $article_id,
+				"rating" => $rating 
+		), "ratings", array (
+				"rating" => ":rating" 
+		) );
 	}
 	public function likeArticle($id) {
-		$sql = $this->_buildInsertQuery ( array (
+		$this->_buildInsertQuery ( array (
 				"article_id" => $id,
 				"user_id" => $_SESSION ['UserId'] 
 		), "likes" );
-		$this->query ( $sql );
 	}
 	public function setUnderReview($article_id) {
 		$this->updateArticleStatus ( $article_id, "under_review" );
@@ -192,7 +209,6 @@ class ArticleMapper extends DBConnect {
 		), "articles", array (
 				"id" => $article_id 
 		) );
-		$this->query ( $sql );
 	}
 	function submitReview($data) {
 		var_dump ( $data );
@@ -206,7 +222,6 @@ class ArticleMapper extends DBConnect {
 				"article_id" => $article_id,
 				"rating" => $rating 
 		), "ratings" );
-		/* $this->query ( $sql ); */
 	}
 	function submitColumnArticle($data) {
 		var_dump ( $data );
@@ -216,20 +231,19 @@ class ArticleMapper extends DBConnect {
 		$this->_addColumnData ( $article_id, $column );
 	}
 	function _addColumnData($article_id, $column) {
-		$sql = $this->_buildInsertQuery ( array (
+		$this->_buildInsertQuery ( array (
 				"article_id" => $article_id,
 				"column_name" => $column 
 		), "column_article" );
-		echo $sql;
-		/* $this->query ( $sql ); */
 	}
 	private function _submitContentWriterData($article_id, $writers) {
 		foreach ( $writers as $writer ) {
 			$sql = $this->_buildInsertQuery ( array (
 					"article_id" => $article_id,
 					"writer_id" => $writer 
-			), "article_writers" );
-			/* $this->query ( $sql ); */
+			), "article_writers", array (
+					"writer_id" => ":writer_id" 
+			) );
 		}
 	}
 	private function _submitContentKeywordData($article_id, $keywords) {
@@ -237,8 +251,9 @@ class ArticleMapper extends DBConnect {
 			$sql = $this->_buildInsertQuery ( array (
 					"article_id" => $article_id,
 					"keyword" => $keyword 
-			), "article_keywords" );
-			/* $this->query ( $sql ); */
+			), "article_keywords", array (
+					"keyword" => ":keyword" 
+			) );
 		}
 	}
 	function setFeaturedArticle($article_id) {
@@ -247,21 +262,10 @@ class ArticleMapper extends DBConnect {
 		), $table, array (
 				"id" => $article_id 
 		) );
-		$this->query ( $sql );
 	}
 }
-class ObjectMap {
-	public function __construct($row) {
-		// var_dump($row);
-		$class_vars = get_class_vars ( get_class ( $this ) );
-		// var_dump($class_vars);
-		foreach ( array_keys ( $class_vars ) as $value ) {
-			if (array_key_exists ( $value, $row )) {
-				$this->$value = fixEncoding ( $row [$value] );
-			} else {
-				throw new ArticleException ( "No row " . $value . " returned from query or wrong article model." );
-			}
-		}
-	}
+/**
+ * Simple exception for ArticleMapper
+ */
+class ArticleMapperException extends Exception {
 }
-

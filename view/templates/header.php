@@ -9,6 +9,7 @@
 	rel="stylesheet">
 <script src="<?php echo JS_PATH ."/jquery-1.9.1.js" ?>"> </script>
 <script src="<?php echo JS_PATH ."/jquery-ui-1.10.3.custom.js"?>"></script>
+<script src="<?php echo JS_PATH ."/main.js" ?>"> </script>
 <script>
 /* $(function() {
 	$( "a" )
@@ -19,13 +20,12 @@ $(document).ready(function () {
 	$('nav li').hover(
 		function () {
 			$('ul', this).stop().slideDown(200);
-
+			
 		}, 
 		function () {
 			$('ul', this).stop().slideUp(200);			
 		}
 	);
-	
 });
 
 
@@ -45,7 +45,8 @@ body {
 	right: 0;
 	width: 42%;
 	opacity: 0.07;
-	filter: alpha(opacity =  7);
+	filter: alpha(opacity =   7);
+	pointer-events: none;
 }
 
 .overlay {
@@ -59,17 +60,19 @@ body {
 </head>
 
 <body>
+	<div id="messages" class="center"></div>
 	<div id="background"></div>
 
 	<img src="<?php echo  IMAGE_PATH. "/shield.png"?>" id="background"
 		class="center">
 	<div class="center main">
-		<div id="topbar">
+		<div id="topbar" class="center">
 <?php
+
 if (! array_key_exists ( 'LoggedIn', $_SESSION )) {
 	echo "<small><a href=\"" . ROOT . "/member/login\">Login</a></small>";
 } else {
-	echo "<span>Hello " . $_SESSION ['UserType'] . " " . $_SESSION ['Username'] . "!     </span>";
+	echo "<span>Hello " . $_SESSION ['UserType'] . " <b>" . $_SESSION ['Username'] . "</b>!     </span>";
 	echo "<a href=\"" . ROOT . "/member/logout\">Logout</a>";
 	echo "<a href=\"" . ROOT . "/member\">Member area</a>";
 }
@@ -83,17 +86,19 @@ if (! array_key_exists ( 'LoggedIn', $_SESSION )) {
 			<h1>Computer Science News</h1>
 		</header>
 		<hr color="#5A8039" size="2px" />
-		<nav>
+		<nav class="center">
 			<ul>
 				<li><a href="<?php  echo ROOT ?>">Home</a></li>
-				<li><a href="<?php echo ROOT . "/latest" ?>">Latest</a></li>
-				<li><a href="<?php  echo ROOT ?>">Categories</a><span
+				<li><a href="<?php echo ROOT . "/latest/all" ?>">Latest</a></li>
+				<li><a href="<?php  echo ROOT ?>">Columns</a><span
 					class="ui-icon ui-icon-carat-1-s"></span>
 					<ul>
-						<li><a href="#">Item 01</a></li>
-						<li><a href="#" class="selected">Item 02</a></li>
+						<li><a href="<?php echo ROOT . "/latest/column/tech" ?>">Technology</a></li>
+						<li><a href="<?php echo ROOT . "/latest/column/cs_success" ?>"
+							class="selected">DCS Success</a></li>
 						<li><a href="#">Item 03</a></li>
 					</ul></li>
+				<li><a href="<?php echo ROOT . "/latest/reviews" ?>">Reviews</a></li>
 				<li><a href="<?php echo ROOT . "/about" ?>">About</a></li>
 			</ul>
 		</nav>

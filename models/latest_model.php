@@ -7,7 +7,21 @@ class LatestModel extends Model {
 	
 	function __construct($view) {
 		parent::__construct($view);
-		$this->mapper = new ArticleMapper();
-		$this->set ( "Map", $this->mapper->fetchAll() );
+		$this->mapper = new ArticleMapper();		
+	}
+	
+	function prepareAll() {
+		$this->set ( "LatestData", $this->mapper->fetchAll() );
+	}
+	
+	function prepareColumnData($column) {
+		$column_articles = $this->mapper->fetchAllColumnArticles($column);
+		$this->set ( "ColumnData",  $column_articles);
+		$this->set ( "Column",  $column);
+	}
+	
+	function prepareReviewData() {
+		$reviews = $this->mapper->fetchAllReviews();
+		$this->set ( "ReviewsData",  $reviews);
 	}
 }

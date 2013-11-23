@@ -1,10 +1,16 @@
 @CHARSET "ISO-8859-1";
 
 body {
-	font-family: Palatino, "Palatino Linotype", "Palatino LT STD",
-		"Book Antiqua", Georgia, serif;
+	font-family: Georgia, "Times New Roman", Serif;
 	position: relative;
 	background-color: #E1E1E1;
+}
+
+#messages {
+	width: 500px;
+	position: absolute;
+	right: 30px;
+	top: 20px;
 }
 
 .center {
@@ -17,16 +23,20 @@ body {
 }
 
 #topbar {
-	width: 1000px;
-	height: 40px;
+	width: 980px;
 	margin-bottom: 15px;
-	-webkit-border-bottom-left-radius: 15px;
-	-webkit-border-bottom-right-radius: 15px;
-	-moz-box-shadow: 1px 1px 1px 1px #ccc;
-	-webkit-box-shadow: 1px 1px 1px 1px #ccc;
 	display: inline-block;
+	background-color: rgba(255, 255, 255, 0.4);
+	padding: 10px;
+	border-bottom: 1px solid #5A8039;
+	border-top: 1px solid #5A8039;
 }
 
+#topbar a {
+	padding: 3px;
+}
+
+}
 header {
 	margin-left: auto;
 	margin-right: auto;
@@ -49,13 +59,14 @@ h1 {
 header h2 {
 	display: inline;
 	margin-left: 49px;
-	font-size: 23px;
+	font-size: 26px;
 	margin-top: 0px;
 	font-family: "Calisto MT", "Bookman Old Style", Bookman,
 		"Goudy Old Style", Garamond, "Hoefler Text", "Bitstream Charter",
 		Georgia, serif;
-	text-shadow: 1px 1px 2px rgba(150, 150, 150, 1);
-	font-style: normal
+	text-shadow: 1px 1px 2px rgba(150, 150, 149, 0.5);
+	color: #363636;
+	font-style: oblique;
 }
 
 .hr {
@@ -133,24 +144,17 @@ nav ul li ul a:hover {
 
 .contents {
 	background-color: white;
-	padding-left: 15px;
-	padding-right: 15px;
-	padding-bottom: 15px;
-	-webkit-border-top-left-radius: 15px;
-	-webkit-border-bottom-right-radius: 15px;
-	-moz-box-shadow: 3px 3px 5px 6px #ccc;
-	-webkit-box-shadow: 3px 3px 5px 6px #ccc;
-	box-shadow: 3px 3px 5px 6px #ccc;
-	background: #fcfff4;
-	background: -moz-linear-gradient(top, #fcfff4 70%, #f2f4f4 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(70%, #fcfff4),
-		color-stop(100%, #f2f4f4)); /
-	background: -webkit-linear-gradient(top, #fcfff4 70%, #f2f4f4 100%);
-	background: -o-linear-gradient(top, #fcfff4 70%, #f2f4f4 100%);
-	background: -ms-linear-gradient(top, #fcfff4 70%, #f2f4f4 100%);
-	background: linear-gradient(to bottom, #fcfff4 70%, #f2f4f4 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient(                  startColorstr='#fcfff4',
-		endColorstr='#f2f4f4', GradientType=0);
+	padding: 15px;
+	margin-top: 20px;
+	background-color: rgba(255, 255, 255, 0.7);
+}
+
+.article_headline {
+	
+}
+
+.article_headline a {
+	color: #5A8039;
 }
 
 .contents h1,.slider h1 {
@@ -160,6 +164,28 @@ nav ul li ul a:hover {
 	font-family: Georgia, "Times New Roman", Serif;
 }
 
+.contents img {
+	max-height: 300px;
+}
+
+.contents p {
+	text-align: justify;
+	text-justify: inter-word;
+}
+
+.comment {
+	padding: 15px;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	background-color: rgba(141, 198, 63, 0.7);
+}
+
+footer {
+	text-align: center;
+	margin-top: 15px;
+}
+
+/* --       Start slider CSS -- */
 .slider h1,.slider h2 {
 	text-shadow: 1px 1px 4px rgba(150, 150, 150, 1);
 }
@@ -169,11 +195,6 @@ nav ul li ul a:hover {
 	font-weight: normal;
 	font-size: 15px;
 	color: white
-}
-
-footer {
-	text-align: center;
-	margin-top: 15px;
 }
 
 .slider {
@@ -230,40 +251,48 @@ footer {
 	/* margin: 10px; */
 }
 
+/* --       End slider CSS -- */
+
+/* --       Start Featured panel CSS -- */
 #featured {
 	font-family: Georgia, "Times New Roman", Serif;
 	width: 470px;
-	
 }
 
-#featured ul li a, #recent_cat ul li a {
+#featured ul li a,#recent_cat ul li a {
 	text-decoration: none;
 	font-size: 16px;
 	color: #5A8039;
 }
 
-#featured ul,  #recent_cat ul{
+#featured ul,#recent_cat ul {
 	list-style: none;
 	margin: 0;
 	padding: 1px;
 }
 
-#recent_cat  {
+#recent_cat {
 	width: 470px;
 }
 
 .ui-button-text {
-   font-size: inherit !important;
-} 
+	font-size: inherit !important;
+}
 
 #radio {
 	width: auto;
 }
 
+/* --       End Featured panel CSS -- */
 textarea {
 	resize: none;
 }
 
+.member_panel {
+	
+}
+
+/*----------------------------*/
 .color1 {
 	color: #CDD1D1
 }
@@ -331,5 +360,3 @@ fieldset {
 	border: 1px solid transparent;
 	padding: 0.3em;
 }
-
-

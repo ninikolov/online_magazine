@@ -1,3 +1,2 @@
 <?php
-
-echo "Page not found";
+echo "Page " . $_SERVER ['HTTP_REFERER'] . " not found";

@@ -16,12 +16,34 @@ define ( "CSS_PATH", ROOT . "/css" );
 define ( "IMAGE_PATH", ROOT . "/images" );
 define ( "JS_PATH", ROOT . "/js" );
 
-define ("SUBSCRIBER", "subscriber");
-define ("WRITER", "writer");
-define ("EDITOR", "editor");
-define ("PUBLISHER", "publisher");
+define ( "SUBSCRIBER", "subscriber" );
+define ( "WRITER", "writer" );
+define ( "EDITOR", "editor" );
+define ( "PUBLISHER", "publisher" );
 
-define ("SUBSCRIBERS", serialize(array(SUBSCRIBER, WRITER, EDITOR, PUBLISHER)));
-define ("WRITERS", serialize(array(WRITER, EDITOR, PUBLISHER)));
-define ("EDITORS", serialize(array(EDITOR, PUBLISHER)));
+define ( "SUBSCRIBERS", serialize ( array (
+		SUBSCRIBER,
+		WRITER,
+		EDITOR,
+		PUBLISHER 
+) ) );
+define ( "WRITERS", serialize ( array (
+		WRITER,
+		EDITOR,
+		PUBLISHER 
+) ) );
+define ( "EDITORS", serialize ( array (
+		EDITOR,
+		PUBLISHER 
+) ) );
 
+$keywords = array (
+		"tech" => "Technology",
+		"department" => "Department related" 
+);
+
+define ( "COLUMNS", serialize ( array (
+		"tech",
+		"cs_success" 
+) ) );
+define ( "KEYWORDS", serialize ( $keywords ) );

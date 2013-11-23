@@ -10,19 +10,18 @@ class ArticleModel extends Model {
 		$this->commentMapper = new CommentMapper ();
 		$this->userMapper = new UserMapper ();
 	}
-	function fetchArticleById($id) {
-		$article = $this->mapper->getArticle ( $id );
-		if ($article->getType () == "column_article") {
-			$this->set ( "Column", $this->mapper->getColumnOfArticle ( $id ) );
-		}
+	function fetchArticleById($article_id) {
+		$article = $this->mapper->getArticle ( $article_id );
 		$this->set ( "Article", $article );
-		$this->set ( "Comments", $this->commentMapper->getCommentsByArticleId ( $id ) );
+		$Comments = $this->commentMapper->getCommentsByArticleId ( $article_id );
+		if (! empty ( $Comments )) {
+			$this->set ( "Users", $this->userMapper->getAuthorsOfComments ( $Comments ) );
+		}
+		$this->set ( "Comments", $Comments );
 		if (isSubscriber ()) {
-			$this->set ( "CanLike", ! $this->userMapper->userHasLiked ( $id, $_SESSION ['UserId'] ) );
-			// $this->set("CanComment", true);
+			$this->set ( "CanLike", ! $this->userMapper->userHasLiked ( $article_id, $_SESSION ['UserId'] ) );
 		} else {
 			$this->set ( "CanLike", false );
-			// $this->set("CanComment", false);
 		}
 		if (isEditor ()) {
 			$this->set ( "WriterList", $this->userMapper->getAllOtherWriters () );

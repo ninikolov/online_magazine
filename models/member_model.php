@@ -10,16 +10,18 @@ class MemberModel extends Model {
 		if (isWriter ()) {
 			$user = $this->userMapper->getUserByName ( $_SESSION ['Username'] );
 			$this->set ( "UserArticles", $this->articleMapper->getUserArticles ( $user ) );
-			$this->set ( "WriterList", $this->userMapper->getAllOtherWriters () );
+			$this->set ( "WriterList", $this->userMapper->getAllWriters () );
 		}
-		if (isEditor()) {
-			$submitted_articles = $this->articleMapper->fetchAllSubmitted();
-			$this->set("SubmittedArticles", $submitted_articles);
+		if (isEditor ()) {
+			$submitted_articles = $this->articleMapper->fetchAllSubmitted ();
+			$this->set ( "SubmittedArticles", $submitted_articles );
+			$this->set ( "EditHistory", $this->articleMapper->getEditHistoryOf ( $_SESSION ["UserId"] ) );
 		}
-		if (isPublisher()) {
-			$non_publishers = $this->userMapper->getAllNonPublisherUsers();
-			$this->set("NonPublishers", $non_publishers);
+		if (isPublisher ()) {
+			$non_publishers = $this->userMapper->getAllNonPublisherUsers ();
+			$this->set ( "NonPublishers", $non_publishers );
 		}
+		// $this->set ( "SuccessMessage", "Success!" );
 	}
 	function verifyAccountDetails($username, $password) {
 		$user = $this->userMapper->getUserByAcc ( $username, $password );
@@ -32,7 +34,12 @@ class MemberModel extends Model {
 		}
 	}
 	function submitArticle($data) {
-		$this->articleMapper->submitNewArticle ( $data );
+		try {
+			// $this->articleMapper->submitNewArticle ( $data );
+			$this->set ( "SuccessMessage", "Successfully added article" . $data ["title"] . "!" );
+		} catch ( ArticleMapperException $e ) {
+			$this->set ( "ErrorMessage", "Error! Failed to add " . $data ["title"] . "! Contact the site owner." );
+		}
 	}
 	function submitReview($data) {
 		$this->articleMapper->submitReview ( $data );
@@ -41,23 +48,21 @@ class MemberModel extends Model {
 		$this->articleMapper->submitColumnArticle ( $data );
 	}
 	function updateArticle($data) {
-		$article_id = $data["id"];
-		unset($data["id"]);
-		$this->articleMapper->updateArticle ( $data , $article_id);
+		$article_id = $data ["id"];
+		unset ( $data ["id"] );
+		$this->articleMapper->updateArticle ( $data, $article_id );
 	}
 	function updateReview($data) {
-		$article_id = $data["id"];
-		unset($data["id"]);
-		$this->articleMapper->updateReview ( $data , $article_id);
+		$article_id = $data ["id"];
+		unset ( $data ["id"] );
+		$this->articleMapper->updateReview ( $data, $article_id );
 	}
 	function updateColumnArticle($data) {
-		$article_id = $data["id"];
-		unset($data["id"]);
-		$this->articleMapper->updateColumnArticle ( $data , $article_id);
+		$article_id = $data ["id"];
+		unset ( $data ["id"] );
+		$this->articleMapper->updateColumnArticle ( $data, $article_id );
 	}
-	
 	function promoteUser($user, $new_type) {
-		$this-> userMapper -> promoteUserType($user, $new_type) ;
+		$this->userMapper->promoteUserType ( $user, $new_type );
 	}
-	
 }

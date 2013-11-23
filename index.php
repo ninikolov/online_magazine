@@ -32,9 +32,11 @@ function redirect() {
 				includeRequired ( $component );
 				$arguments = getArguments ();
 				$controller_class = createComponents ( $arguments, $component, $class );
+				break;
 			}
 		}
 		if ($controller_class == null) {
+			/* echo $arg; */
 			require_once 'control/pagenotfound.php';
 		}
 	}
@@ -63,23 +65,27 @@ function createComponents($arguments, $component, $class) {
 		return null;
 	}
 	$controller = new $class ( $component . "View", $component . "Model" );
-	if (method_exists ( $class, $arguments [0] )) {
-		if (sizeof ( $arguments ) == 1) {
-			call_user_func_array ( array (
-					$controller,
-					$arguments [0] 
-			), array () );
-		} else {
-			call_user_func_array ( array (
-					$controller,
-					$arguments [0] 
-			), array (
-					$arguments [1] 
-			) );
-		}
+	if ($arguments == "no_args") {
 		return $class;
 	} else {
-		return null;
+		if (method_exists ( $class, $arguments [0] )) {
+			if (sizeof ( $arguments ) == 1) {
+				call_user_func_array ( array (
+						$controller,
+						$arguments [0] 
+				), array () );
+			} else {
+				call_user_func_array ( array (
+						$controller,
+						$arguments [0] 
+				), array (
+						$arguments [1] 
+				) );
+			}
+			return $class;
+		} else {
+			return null;
+		}
 	}
 }
 /**
@@ -88,6 +94,9 @@ function createComponents($arguments, $component, $class) {
  */
 function getArguments() {
 	$arguments = $_GET ["arguments"];
+	if(empty($arguments)) {
+		return "no_args";
+	}
 	$arguments = ltrim ( $arguments, '/' );
 	$extra = explode ( "/", $arguments );
 	if (count ( $extra ) > 2) {
@@ -98,3 +107,4 @@ function getArguments() {
 
 //
 redirect ();
+

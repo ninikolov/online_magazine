@@ -1,47 +1,23 @@
 <?php
 require_once 'db_connect.php';
-require_once 'article_mapper.php';
-class User {
-	private $id;
-	private $name;
-	private $password;
-	private $type;
-	public function getId() {
-		return $this->id;
-	}
-	public function getName() {
-		return $this->name;
-	}
-	public function getPassword() {
-		return $this->password;
-	}
-	public function getType() {
-		return $this->type;
-	}
-	public function __construct($row) {
-		// var_dump($row);
-		$class_vars = get_class_vars ( get_class ( $this ) );
-		// var_dump($class_vars);
-		foreach ( array_keys ( $class_vars ) as $value ) {
-			if (array_key_exists ( $value, $row )) {
-				$this->$value = fixEncoding ( $row [$value] );
-			} else {
-				throw new ArticleException ( "No row " . $value . " returned from query or wrong article model." );
-			}
-		}
-	}
-}
+require_once 'user.class.php';
 class UserMapper extends DBConnect {
 	function __construct() {
 		$this->connect ();
 	}
 	function validUser($username, $password) {
-		$response = $this->query ( "select * from `users` where `name` = '" . $username . "' and `password` = '" . $password . "'" );
+		$response = $this->selectAllFromWhere ( "users", "`name`=:name and `password`=:password", array (
+				":name" => $username,
+				":password" => $password 
+		) );
 		$results = $response->fetch ();
 		return ! $this->responseIsEmpty ( $results );
 	}
 	function getUserByAcc($username, $password) {
-		$response = $this->query ( "select * from `users` where `name` = '" . $username . "' and `password` = '" . $password . "'" );
+		$response = $this->selectAllFromWhere ( "users", "`name`=:name and `password`=:password", array (
+				":name" => $username,
+				":password" => $password 
+		) );
 		$result = $response->fetch ();
 		try {
 			return new User ( $result );
@@ -50,7 +26,22 @@ class UserMapper extends DBConnect {
 		}
 	}
 	function getUserByName($username) {
-		$response = $this->query ( "select * from `users` where `name` = '" . $username . "'" );
+		// $response = $this->query ( "select * from `users` where `name` = '" . $username . "'" );
+		$response = $this->selectAllFromWhere ( "users", "`name`=:name", array (
+				":name" => $username 
+		) );
+		$result = $response->fetch ();
+		try {
+			return new User ( $result );
+		} catch ( Exception $e ) {
+			return false;
+		}
+	}
+	function getUserById($id) {
+		// $response = $this->query ( "select * from `users` where `id` = '" . $id . "'" );
+		$response = $this->selectAllFromWhere ( "users", "`id`=:id", array (
+				":id" => $id 
+		) );
 		$result = $response->fetch ();
 		try {
 			return new User ( $result );
@@ -59,8 +50,12 @@ class UserMapper extends DBConnect {
 		}
 	}
 	function userHasLiked($article_id, $user_id) {
-		$response = $this->query ( "select * from `likes` where `article_id` = '" . $article_id . "' and `user_id` = '" . $user_id . "'" );
-		return !$this->responseIsEmpty($response);
+		// $response = $this->query ( "select * from `likes` where `article_id` = '" . $article_id . "' and `user_id` = '" . $user_id . "'" );
+		$response = $this->selectAllFromWhere ( "likes", "`article_id`=:article_id and `user_id`=:user_id", array (
+				":article_id" => $article_id,
+				":user_id" => $user_id 
+		) );
+		return ! $this->responseIsEmpty ( $response );
 	}
 	function getAllWriters() {
 		$result = $this->selectAllFrom ( "writers_list_view" );
@@ -80,7 +75,6 @@ class UserMapper extends DBConnect {
 		}
 		return $writers;
 	}
-	
 	function getAllNonPublisherUsers() {
 		$result = $this->selectAllFrom ( "non_publisher_users_view" );
 		$output = [ ];
@@ -89,13 +83,19 @@ class UserMapper extends DBConnect {
 		}
 		return $output;
 	}
-	
 	function promoteUserType($user_id, $new_type) {
-		$sql = $this->_buildUpdateQuery(array(
-			"type" => $new_type
-		), "users", array(
-			"id" => $user_id
-		));
-		$this-> query($sql);
+		$sql = $this->_buildUpdateQuery ( array (
+				"type" => $new_type 
+		), "users", array (
+				"id" => $user_id 
+		) );
+		$this->query ( $sql );
+	}
+	function getAuthorsOfComments($Comments) {
+		$Users = array ();
+		foreach ( $Comments as $key => $value ) {
+			$Users [$key] = $this->getUserById ( $value->getUserId () );
+		}
+		return $Users;
 	}
 }
