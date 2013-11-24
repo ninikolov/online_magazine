@@ -50,3 +50,7 @@
 </div>
 
 <button id="create-article">Create a new article</button>
+
+<div id="dialog">
+  Are you sure that you want to submit this article? 
+</div>

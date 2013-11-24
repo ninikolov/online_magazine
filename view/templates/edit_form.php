@@ -19,6 +19,25 @@ function hasWriter($writer, $article) {
 	else
 		return false;
 }
+echo "<script>$( document ).ready(function() {";
+switch ($Article->getType ()) {
+	case "article" :
+		echo "\$('.rating_select').hide();";
+		echo "\$('.column_select').hide();";
+		break;
+	
+	case "column_article" :
+		echo "\$('.rating_select').hide();";
+		echo "\$('.column_select').show();";
+		break;
+	
+	case "review" :
+		echo "\$('.column_select').hide();";
+		echo "\$('.rating_select').show();";
+		break;
+}
+
+echo "});</script>";
 
 ?>
 
@@ -53,12 +72,23 @@ function hasWriter($writer, $article) {
 				<option value="cs_success">CS Success</option>
 			</select> <label for="rating" class="rating_select">Rating:</label> <select
 				name="article[rating]" class="rating_select">
-				<option value="0">0</option>
+				<?php
+				if ($Article->getType () == "review") {
+					foreach ( range ( 0, 5 ) as $rating ) {
+						echo "<option value='" . $rating . "'" . selectOption ( $rating, $Article->getRating () ) . ">" . $rating . "</option>";
+					}
+				} else {
+					foreach ( range ( 0, 5 ) as $rating ) {
+						echo "<option value='" . $rating . "'>" . $rating . "</option>";
+					}
+				}
+				?>
+				<!-- <option value="0">0</option>
 				<option value="1">1</option>
 				<option value="2">2</option>
 				<option value="3">3</option>
 				<option value="4">4</option>
-				<option value="5">5</option>
+				<option value="5">5</option> -->
 			</select> <label for="keywords" class="keywords">Keywords:</label> <select
 				name="article[keywords][]" class="keywords" multiple>
 				<?php
@@ -71,7 +101,7 @@ function hasWriter($writer, $article) {
 				}
 				?>
 			</select> <label for="writers" class="writers">Other Writers:</label>
-			<select name="article[writer][]" class="writers" multiple>
+			<select name="article[writer][]" id="writers" class="writers" multiple>
 	  <?php
 			foreach ( $WriterList as $writer ) {
 				if (hasWriter ( $writer->getName (), $Article )) {
@@ -90,3 +120,4 @@ function hasWriter($writer, $article) {
 
 <button id="edit-article">Edit article</button>
 
+<div id="dialog">Are you sure that you want to submit this article?</div>

@@ -28,5 +28,34 @@ function fixEncoding($str) {
 	}
 	return mb_convert_encoding ( $str, 'UTF-8', 'UTF-8' );
 }
-
-
+function displayMessage($ignore_request = array()) {
+	if (empty ( $_SESSION ['error_messages'] ) || ! isset ( $_SESSION ['error_messages'] )) {
+		return;
+	} else {
+		if (! empty ( $ignore_request )) {
+			var_dump ( $ignore_request );
+			$expl = explode ( "/", $_SERVER ['REQUEST_URI'] );
+			$ind = count ( $expl ) - 2;
+			var_dump($expl);
+			echo $expl [$ind];
+			foreach ( $ignore_request as $action ) {
+				if (endsWith ( $_SERVER ['REQUEST_URI'], $action ) || $expl [$ind] == $action) {
+					return;
+				}
+			}
+		}
+		foreach ( $_SESSION ['error_messages'] as $key => $value ) {
+			echo '<script type="text/javascript">', 'alert_' . $key . '_message("' . $value . '");', '</script>';
+		}
+		$_SESSION ['error_messages'] = array ();
+	}
+}
+function addMessage($type, $message) {
+	if (! isset ( $_SESSION ['error_messages'] )) {
+		$_SESSION ['error_messages'] = array ();
+	}
+	$_SESSION ['error_messages'] [$type] = $message;
+}
+function endsWith($target_str, $search) {
+	return substr ( $target_str, - strlen ( $search ) ) == $search;
+}

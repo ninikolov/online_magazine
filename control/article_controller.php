@@ -36,10 +36,14 @@ class ArticleController extends Controller {
 		$this->_model->setUnderReview ( $article_id );
 		header ( 'Location: ' . ROOT . "/article/view/" . $article_id );
 	}
-	function edit($article_id) {
-	}
 	function update_status($article_id) {
 		$new_status = $_POST ["status"];
 		$this->_model->updateStatus ( $article_id, $new_status );
+	}
+	function feature($article_id) {
+		$this->_model->featureArticle ( $article_id );
+	}
+	function unfeature($article_id) {
+		$this->_model->unFeatureArticle ( $article_id );
 	}
 }

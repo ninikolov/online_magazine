@@ -5,22 +5,28 @@ if (empty ( $_SESSION ['LoggedIn'] ) || empty ( $_SESSION ['Username'] )) {
 	echo "<h2>You will soon be redirected to the login page</h2>";
 	echo "<meta http-equiv='refresh' content='2;" . ROOT . "' >";
 } else {
-	echo "<h3>Welcome " . $_SESSION ['UserType'] . " " . $_SESSION ['Username'] . " !</h3>";
+	// echo "<h3>Welcome " . $_SESSION ['UserType'] . " " . $_SESSION ['Username'] . " !</h3>";
 }
 
-if (isset ( $SuccessMessage )) {
-	echo '<script type="text/javascript">', 'alert_success_message("' . $SuccessMessage . '");', '</script>';
-} elseif (isset ($ErrorMessage)) {
-	echo '<script type="text/javascript">', 'alert_error_message("' . $ErrorMessage . '");', '</script>';
-}
+displayMessage ( array (
+		"submit",
+		"edit" 
+) );
+
+
+
 if (isWriter ()) {
 	// echo "<a href=". ROOT."/write>Write a new article</a>";
+	echo "<div class='writer_panel contents'>";
 	echo "<h2>Writer Panel</h2>";
+	echo '<hr color="#5A8039" size="1px" />';
 	echo "<h3>Your articles: </h3>";
-	echo "<table border=\"0\"> <tr><th>Title</th><th>Status</th></tr>";
+	echo "<table> <tr><th>Title</th><th>Date</th><th>Status</th></tr>";
 	foreach ( $UserArticles as $article ) {
 		echo "<tr><td class=\"article\">";
 		echo "<a href=\"" . ROOT . "/article/view/" . $article->getId () . "\">" . htmlspecialchars ( $article->getTitle () ) . "</a>";
+		echo "</td><td>";
+		echo $article->getDate ();
 		echo "</td><td>";
 		if ($article->getStatus () == "submitted") {
 			echo "Submitted";
@@ -35,14 +41,20 @@ if (isWriter ()) {
 	}
 	echo "</table>";
 	require_once 'write_form.php';
+	echo "</div>";
 }
 if (isEditor ()) {
+	echo "<div class='editor_panel contents'>";
 	echo "<h2>Editor Panel</h2>";
-	echo "<h3>Submitted articles waiting to be reviewed: </h3>";
-	echo "<table border=\"0\"> <tr><th>Title</th><th>Status</th></tr>";
+	echo '<hr color="#5A8039" size="1px" />';
+	echo "<h3>Submitted articles waiting to be reviewed </h3>";
+	echo "<p>Visit those articles in order to edit them </p>";
+	echo "<table> <tr><th>Title</th><th>Date</th><th>Status</th></tr>";
 	foreach ( $SubmittedArticles as $article ) {
 		echo "<tr><td class=\"article\">";
 		echo "<a href=\"" . ROOT . "/article/view/" . $article->getId () . "\">" . htmlspecialchars ( $article->getTitle () ) . "</a>";
+		echo "</td><td>";
+		echo $article->getDate ();
 		echo "</td><td>";
 		if ($article->getStatus () == "submitted") {
 			echo "Submitted";
@@ -58,10 +70,13 @@ if (isEditor ()) {
 	echo "</table>";
 	
 	echo "<h3>Your edit History: </h3>";
-	echo "<table>";
+	echo '<hr color="#5A8039" size="1px" />';
+	echo "<table> <tr><th>Title</th><th>Date</th><th>Status</th></tr>";
 	foreach ( $EditHistory as $article ) {
 		echo "<tr><td class=\"article\">";
 		echo "<a href=\"" . ROOT . "/article/view/" . $article->getId () . "\">" . htmlspecialchars ( $article->getTitle () ) . "</a>";
+		echo "</td><td>";
+		echo $article->getDate ();
 		echo "</td><td>";
 		if ($article->getStatus () == "submitted") {
 			echo "Submitted";
@@ -75,10 +90,13 @@ if (isEditor ()) {
 		echo "</td></tr>";
 	}
 	echo "</table>";
+	echo "</div>";
 }
 
 if (isPublisher ()) {
+	echo "<div class='publisher_panel contents'>";
 	echo "<h2>Publisher Panel</h2>";
+	echo '<hr color="#5A8039" size="1px" />';
 	echo "<h3>Magazine users: </h3>";
 	echo "<table border=\"1\"> <tr><th>User</th><th>Type</th></tr>";
 	foreach ( $NonPublishers as $user ) {
@@ -110,9 +128,9 @@ if (isPublisher ()) {
 		</fieldset>
 	</form>
 </div>
+</div>
 <?php
 } else {
 }
 
 ?>
-

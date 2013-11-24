@@ -34,6 +34,11 @@ body {
 
 #topbar a {
 	padding: 3px;
+	color: #5A8039;
+}
+
+#topbar a:hover {
+	color: #75CC29;
 }
 
 }
@@ -147,6 +152,7 @@ nav ul li ul a:hover {
 	padding: 15px;
 	margin-top: 20px;
 	background-color: rgba(255, 255, 255, 0.7);
+	border-bottom: 3px solid #5A8039;
 }
 
 .article_headline {
@@ -201,7 +207,7 @@ footer {
 	width: 980px;
 	height: 400px;
 	margin-bottom: 20px;
-	background-color: rgba(255, 255, 255, 0.25);
+	background-color: rgba(255, 255, 255, 0.5);
 	border-bottom: 3px solid #5A8039;
 }
 
@@ -213,10 +219,19 @@ footer {
 }
 
 .small_thumbnail {
-	float: left;
-	/* width: 300px;
-	height: 270px; */
 	position: relative;
+	float: left;
+	overflow: hidden;
+	width: 292px;
+	height: 200px;
+}
+
+.overlay a {
+	text-decoration: none;
+}
+
+.overlay a:hover {
+	text-decoration: underline;
 }
 
 .slider {
@@ -246,33 +261,43 @@ footer {
 }
 
 .sidebar_image {
-	max-width: 100%;
-	max-height: 100%;
+	max-width: 384px;
 	/* margin: 10px; */
 }
 
 /* --       End slider CSS -- */
 
 /* --       Start Featured panel CSS -- */
-#featured {
-	font-family: Georgia, "Times New Roman", Serif;
-	width: 470px;
+#bottom_panels {
+	position: relative;
+	height: 550px;
 }
 
-#featured ul li a,#recent_cat ul li a {
+#featured {
+	font-family: Georgia, "Times New Roman", Serif;
+	float: left;
+	border-bottom: 3px solid #5A8039;
+}
+
+.headlines_panel ul li a {
 	text-decoration: none;
 	font-size: 16px;
 	color: #5A8039;
 }
 
-#featured ul,#recent_cat ul {
+.headlines_panel ul li a:hover {
+	text-decoration: underline;
+}
+
+.headlines_panel ul {
 	list-style: none;
 	margin: 0;
 	padding: 1px;
 }
 
 #recent_cat {
-	width: 470px;
+	float: right;
+	border-bottom: 3px solid #5A8039;
 }
 
 .ui-button-text {
@@ -280,7 +305,15 @@ footer {
 }
 
 #radio {
-	width: auto;
+	display: inherit;
+	margin-left: 73px;
+	font-size: .8em !important;
+}
+
+.headlines_panel {
+	background-color: rgba(255, 255, 255, 0.5);
+	padding: 15px;
+	width: 450px;
 }
 
 /* --       End Featured panel CSS -- */
@@ -290,6 +323,37 @@ textarea {
 
 .member_panel {
 	
+}
+
+.member_panel table {
+	width: 100%;
+	border-collapse: collapse;
+	border: 1px solid black;
+}
+
+.member_panel a {
+	color: #5A8039;
+}
+
+.member_panel a:hover {
+	color: #75CC29;
+}
+
+#panel {
+	height: 300px;
+}
+
+#panel img {
+	float: left;
+}
+
+#edit_panel {
+	padding: 20px;
+	border: 1px solid green;
+	margin-left: 769px;
+}
+
+#article_body {
 }
 
 /*----------------------------*/

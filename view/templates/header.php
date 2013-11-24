@@ -53,13 +53,14 @@ body {
 	position: absolute;
 	left: 0px;
 	background: url('<?php echo ROOT ?>/images/bg.png');
-	bottom: 4px;
+	bottom: 0px;
 	padding: 4px;
 }
 </style>
 </head>
 
 <body>
+
 	<div id="messages" class="center"></div>
 	<div id="background"></div>
 
@@ -75,6 +76,7 @@ if (! array_key_exists ( 'LoggedIn', $_SESSION )) {
 	echo "<span>Hello " . $_SESSION ['UserType'] . " <b>" . $_SESSION ['Username'] . "</b>!     </span>";
 	echo "<a href=\"" . ROOT . "/member/logout\">Logout</a>";
 	echo "<a href=\"" . ROOT . "/member\">Member area</a>";
+	echo "<a href=\"" . ROOT . "/member/manual\">User manual</a>";
 }
 ?>
 			</div>

@@ -11,7 +11,7 @@ class LatestModel extends Model {
 	}
 	
 	function prepareAll() {
-		$this->set ( "LatestData", $this->mapper->fetchAll() );
+		$this->set ( "LatestData", $this->mapper->fetchAllLatest() );
 	}
 	
 	function prepareColumnData($column) {

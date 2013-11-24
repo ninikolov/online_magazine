@@ -6,7 +6,7 @@
  * 
  * @param t
  */
-function updateTips(t) {
+function updateTips(t, tips) {
 	tips.text(t).addClass("ui-state-highlight");
 	setTimeout(function() {
 		tips.removeClass("ui-state-highlight", 1500);
@@ -21,7 +21,7 @@ function updateTips(t) {
  * @param max
  * @returns {Boolean}
  */
-function checkWordsCount(target, name, min, max) {
+function checkWordsCount(target, name, min, max, tips) {
 	var text = target.val().trim();
 	var highlight = false;
 	if (target.val().trim() == "") {
@@ -35,7 +35,7 @@ function checkWordsCount(target, name, min, max) {
 	if (highlight) {
 		target.addClass("ui-state-error");
 		updateTips("Length of " + name + " must be between " + min + " and "
-				+ max + ".");
+				+ max + ".", tips);
 		return false;
 	} else {
 		return true;
@@ -50,11 +50,11 @@ function checkWordsCount(target, name, min, max) {
  * @param max
  * @returns {Boolean}
  */
-function checkLength(o, n, min, max) {
+function checkLength(o, n, min, max, tips) {
 	if (o.val().length > max || o.val().length < min) {
 		o.addClass("ui-state-error");
 		updateTips("Length of " + n + " must be between " + min + " and " + max
-				+ ".");
+				+ ".", tips);
 		return false;
 	} else {
 		return true;
@@ -66,10 +66,25 @@ function checkLength(o, n, min, max) {
  * @param o
  * @returns {Boolean}
  */
-function checkImage(o) {
+function checkImage(o, tips) {
 	if (o.val() == "") {
 		o.addClass("ui-state-error");
-		updateTips("You must select a cover image for the article.");
+		updateTips("You must select a cover image for the article.", tips);
+		return false;
+	} else {
+		return true;
+	}
+}
+
+/**
+ * 
+ * @param o
+ * @returns {Boolean}
+ */
+function checkWriters(o, tips) {
+	if (o.val() == null) {
+		o.addClass("ui-state-error");
+		updateTips("You must select at least one writer for the article.", tips);
 		return false;
 	} else {
 		return true;

@@ -17,18 +17,13 @@ class MemberController extends Controller {
 			);
 		}
 		$this->_articleDataRequest ( $data, "submit" );
-		echo "<meta http-equiv='refresh' content='2;" . $_SERVER ['HTTP_REFERER'] . "' >";
+		header ( 'Location: ' . $_SERVER ['HTTP_REFERER'] );
 	}
 	function edit($article_id) {
 		$data = $_POST ['article'];
-		/*
-		 * if (array_key_exists ( "writer", $data )) { unset ( $data ["writer"] ); } if (array_key_exists ( "keywords", $data )) { unset ( $data ["keywords"] ); }
-		 */
 		$data ["id"] = $article_id;
-		// var_dump($data);
-		// $this->_model->updateArticle ( $data, $article_id );
 		$this->_articleDataRequest ( $data, "update" );
-		/* header ( 'Location: ' . $_SERVER ['HTTP_REFERER'] ); */
+		header ( 'Location: ' . $_SERVER ['HTTP_REFERER'] );
 	}
 	private function _articleDataRequest($data, $type) {
 		$image_path = $this->_uploadImage ();

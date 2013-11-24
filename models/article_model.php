@@ -39,4 +39,10 @@ class ArticleModel extends Model {
 	function updateStatus($article_id, $status) {
 		$this->mapper->updateArticleStatus ( $article_id, $status );
 	}
+	function featureArticle($article_id) {
+		$this->mapper->setFeaturedArticle($article_id);
+	}
+	function unFeatureArticle($article_id) {
+		$this->mapper->unsetFeaturedArticle($article_id);
+	}
 }

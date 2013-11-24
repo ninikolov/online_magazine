@@ -1,10 +1,9 @@
 <?php
-
 require_once 'util/util.php';
 require_once 'object_map.class.php';
 
 /**
- * Class representation of an Article. 
+ * Class representation of an Article.
  */
 class Article extends ObjectMap {
 	protected $id;
@@ -31,13 +30,21 @@ class Article extends ObjectMap {
 		return $this->image_path;
 	}
 	public function getLikesCount() {
-		return $this->likes_count;
+		//var_dump($this->likes_count);
+		if ($this->likes_count  == "") {
+			return '0';
+		} else {
+			return $this->likes_count;
+		}
 	}
 	public function getKeyWords() {
 		return $this->keywords;
 	}
 	public function getDate() {
-		return $this->date;
+		return (new DateTime($this->date))->format ( 'Y-m-d' );
+	}
+	public function getDateTime() {
+		return new DateTime($this->date);
 	}
 	public function getStatus() {
 		return $this->status;
@@ -45,11 +52,14 @@ class Article extends ObjectMap {
 	public function getWriter() {
 		return $this->writers;
 	}
-	function getType() {
+	public function getType() {
 		return $this->type;
 	}
-	function getFeatured() {
+	public function getFeatured() {
 		return $this->featured;
+	}
+	public function checkIfWriter() {
+		return strpos($this->getWriter(), $_SESSION ['Username']) !== false;
 	}
 }
 /**

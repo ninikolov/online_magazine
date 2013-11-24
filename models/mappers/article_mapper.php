@@ -2,7 +2,7 @@
 require_once 'db_connect.php';
 require_once 'article.class.php';
 /**
- * Provides a mapping for creating and updating article data. 
+ * Provides a mapping for creating and updating article data.
  */
 class ArticleMapper extends DBConnect {
 	function __construct() {
@@ -11,9 +11,9 @@ class ArticleMapper extends DBConnect {
 	
 	// Internal
 	/**
-	 * 
-	 * @param unknown $result
-	 * @param string $class
+	 *
+	 * @param unknown $result        	
+	 * @param string $class        	
 	 * @return multitype:
 	 */
 	private function _mapResultsToArticles($result, $class = "Article") {
@@ -41,6 +41,9 @@ class ArticleMapper extends DBConnect {
 	}
 	function fetchFeaturedArticles() {
 		return $this->fetchAll ( "recently_highlighted_articles_view" );
+	}
+	function fetchAllLatest() {
+		return $this->fetchAll ( "global_latest_articles_view" );
 	}
 	function fetchLatestFiveArticles() {
 		return $this->fetchAll ( "latest_articles_view" );
@@ -259,7 +262,14 @@ class ArticleMapper extends DBConnect {
 	function setFeaturedArticle($article_id) {
 		$sql = $this->_buildUpdateQuery ( array (
 				"featured" => "1" 
-		), $table, array (
+		), "articles", array (
+				"id" => $article_id 
+		) );
+	}
+	function unsetFeaturedArticle($article_id) {
+		$sql = $this->_buildUpdateQuery ( array (
+				"featured" => "0" 
+		), "articles", array (
 				"id" => $article_id 
 		) );
 	}

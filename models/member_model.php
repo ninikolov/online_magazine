@@ -21,7 +21,6 @@ class MemberModel extends Model {
 			$non_publishers = $this->userMapper->getAllNonPublisherUsers ();
 			$this->set ( "NonPublishers", $non_publishers );
 		}
-		// $this->set ( "SuccessMessage", "Success!" );
 	}
 	function verifyAccountDetails($username, $password) {
 		$user = $this->userMapper->getUserByAcc ( $username, $password );
@@ -35,10 +34,10 @@ class MemberModel extends Model {
 	}
 	function submitArticle($data) {
 		try {
-			// $this->articleMapper->submitNewArticle ( $data );
-			$this->set ( "SuccessMessage", "Successfully added article" . $data ["title"] . "!" );
+			$this->articleMapper->submitNewArticle ( $data );
+			addMessage ( "success", "Successfully added article" . $data ["title"] . "!" );
 		} catch ( ArticleMapperException $e ) {
-			$this->set ( "ErrorMessage", "Error! Failed to add " . $data ["title"] . "! Contact the site owner." );
+			addMessage ( "error", "Error! Failed to add " . $data ["title"] . "! Contact the site owner." );
 		}
 	}
 	function submitReview($data) {
@@ -50,12 +49,22 @@ class MemberModel extends Model {
 	function updateArticle($data) {
 		$article_id = $data ["id"];
 		unset ( $data ["id"] );
-		$this->articleMapper->updateArticle ( $data, $article_id );
+		try {
+			$this->articleMapper->updateArticle ( $data, $article_id );
+			addMessage ( "success", "Successfully updated article" . $data ["title"] . "!" );
+		} catch ( ArticleMapperException $e ) {
+			addMessage ( "error", "Error! Failed to update " . $data ["title"] . "! Contact the site owner." );
+		}
 	}
 	function updateReview($data) {
 		$article_id = $data ["id"];
 		unset ( $data ["id"] );
-		$this->articleMapper->updateReview ( $data, $article_id );
+		try {
+			$this->articleMapper->updateReview ( $data, $article_id );
+			addMessage ( "success", "Successfully updated review" . $data ["title"] . "!" );
+		} catch ( ArticleMapperException $e ) {
+			addMessage ( "error", "Error! Failed to update review " . $data ["title"] . "! Contact the site owner." );
+		}
 	}
 	function updateColumnArticle($data) {
 		$article_id = $data ["id"];

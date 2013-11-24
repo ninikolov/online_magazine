@@ -47,3 +47,5 @@ define ( "COLUMNS", serialize ( array (
 		"cs_success" 
 ) ) );
 define ( "KEYWORDS", serialize ( $keywords ) );
+
+$_SESSION['error_messages'] = array();
