@@ -2,14 +2,22 @@
 <script>
 $( document ).ready(function() {
 	$("#edit_panel a[href]").button();
+	$("#user_metadata a[href]").button();
 });
 </script>
 
 <div class="contents">
  <?php
-	displayMessage ( array () );
+	displayMessage ( array (
+			"like",
+			"unlike",
+			"comment",
+			"update_status",
+			"feature",
+			"unfeature" 
+	) );
 	
-	if (true) {
+	if ($Article && $Article->visibleArticle ()) {
 		echo "<h2>" . $Article->getTitle () . "</h2>";
 		echo "<p>";
 		if ($Article->getType () == "column_article") {
@@ -31,15 +39,11 @@ $( document ).ready(function() {
 			echo "<h3>Article Edit Options: </h3>";
 			echo "<small><a href=\"" . ROOT . "/article/toggle_review/" . $Article->getId () . "\">Set article to 'Under review'</a></small>";
 			echo "</div>";
-		} elseif (isEditor () && ($Article->getStatus () == "under_review" || $Article->getStatus () == "awaiting_changes")) {
+		} elseif (isEditor () && ($Article->isUnderReview () || $Article->isAwaitingChanges ())) {
 			echo "<div id='edit_panel'>";
 			echo "<h3>Article Edit Options: </h3>";
 			require_once 'edit_form.php';
-			if ($Article->getFeatured () == "0") {
-				echo "<small><a href=\"" . ROOT . "/article/feature/" . $Article->getId () . "\">Feature article</a></small>";
-			} else {
-				echo "<small><a href=\"" . ROOT . "/article/unfeature/" . $Article->getId () . "\">Remove from featured</a></small>";
-			}
+			echo "<b>Current Status:</b></br>" . $Article->getFormattedStatus ();
 			require_once 'article_status_form.php';
 			echo "</div>";
 		} elseif ($Article->checkIfWriter () && $Article->getStatus () == "awaiting_changes") {
@@ -47,7 +51,16 @@ $( document ).ready(function() {
 			echo "<h3>Article Edit Options: </h3>";
 			require_once 'edit_form.php';
 			echo "</div>";
-		} elseif (isEditor()) {
+		} elseif (isEditor () && ($Article->isPublished ())) {
+			echo "<div id='edit_panel'>";
+			echo "<h3>Article Edit Options: </h3>";
+			if ($Article->getFeatured () == "0") {
+				echo "<small><a href=\"" . ROOT . "/article/feature/" . $Article->getId () . "\">Feature article</a></small>";
+			} else {
+				echo "<small><a href=\"" . ROOT . "/article/unfeature/" . $Article->getId () . "\">Remove from featured</a></small>";
+			}
+			echo "</div>";
+		} elseif (isEditor ()) {
 			echo "<div id='edit_panel'>";
 			echo "<h3>Article Options: </h3>";
 			if ($Article->getFeatured () == "0") {
@@ -65,39 +78,51 @@ $( document ).ready(function() {
 		
 		echo "<p>" . $Article->getBody () . "</p>";
 		echo "</div>";
+		echo "<div id='user_metadata'>";
 		echo "<p>" . "<b>Likes:</b> " . $Article->getLikesCount () . "</p>";
 		if (isSubscriber ()) {
 			if ($CanLike) {
-				echo "<a href=\"" . ROOT . "/article/like/" . $Article->getId () . "\">" . "Like " . "</a>";
+				echo "<small><a href=\"" . ROOT . "/article/like/" . $Article->getId () . "\">" . "Like " . "</a></small>";
 			} else {
-				?>
-<a>You've alreadly liked this article</a>
-
-<?php
+				echo "<small><a href=\"" . ROOT . "/article/unlike/" . $Article->getId () . "\">" . "Unlike " . "</a></small>";
 			}
 		}
 		
 		foreach ( $Comments as $key => $Comment ) {
-			echo "<div class=\"comment\"><p>" . htmlspecialchars ( $Comment->getBody (), ENT_COMPAT | ENT_SUBSTITUTE, "UTF-8" ) . "</p>";
-			echo "<p><b>Written by: </b>" . $Users [$key]->getName () . " on " . $Comment->getDate () . "</p>";
+			$comment_tag = "Comment";
+			if ($Comment->isEditComment () && ! ($Article->checkIfWriter () || isEditor ())) {
+				continue;
+			} else {
+				$comment_tag = "Internal " . $comment_tag;
+			}
+			echo "<div class=\"comment\"><p><b>" . $comment_tag . ":</b> " . htmlspecialchars ( $Comment->getBody (), ENT_COMPAT | ENT_SUBSTITUTE, "UTF-8" ) . "</p>";
+			echo "<p><b>Written by: </b>" . $Users [$key]->getName () . " <b>on</b> " . $Comment->getDate () . "</p>";
 			echo "</div>";
 		}
 		
 		if (isSubscriber ()) {
 			?>
 
-<form method="post"
+<form id="comment_form" method="post"
 		action="<?php echo ROOT."/article/comment/".$Article->getId () ?>"
 		name="comment" id="comment">
 		<textarea name="commentbody" id="commentbody"
-			class="text ui-widget-content ui-corner-all" rows="5" cols="30"></textarea>
+			class="text ui-widget-content ui-corner-all" rows="5" cols="70"></textarea>
+		<?php
+			
+			if (($Article->checkIfWriter () || isEditor ()) && ($Article->isUnderReview () || $Article->isAwaitingChanges ())) {
+				echo "<input type='checkbox' name='internal' value='internal'>Tick to make comment internal (won't be seen outside the publishing process)";
+			}
+			?>
 		<input type="submit" name="submit" id="submit" value="Submit comment" />
 	</form>
 
 <?php
 		} else {
 		}
+	} else {
+		echo "<h3>No such article or unavailable to you</h3>";
 	}
 	?>
-	
+	</div>
 </div>

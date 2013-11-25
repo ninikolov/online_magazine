@@ -83,12 +83,6 @@ echo "});</script>";
 					}
 				}
 				?>
-				<!-- <option value="0">0</option>
-				<option value="1">1</option>
-				<option value="2">2</option>
-				<option value="3">3</option>
-				<option value="4">4</option>
-				<option value="5">5</option> -->
 			</select> <label for="keywords" class="keywords">Keywords:</label> <select
 				name="article[keywords][]" class="keywords" multiple>
 				<?php

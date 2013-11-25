@@ -72,11 +72,12 @@ body {
 
 if (! array_key_exists ( 'LoggedIn', $_SESSION )) {
 	echo "<small><a href=\"" . ROOT . "/member/login\">Login</a></small>";
+	echo "<small><a href=\"" . ROOT . "/member/register\">Register</a></small>";
 } else {
 	echo "<span>Hello " . $_SESSION ['UserType'] . " <b>" . $_SESSION ['Username'] . "</b>!     </span>";
 	echo "<a href=\"" . ROOT . "/member/logout\">Logout</a>";
 	echo "<a href=\"" . ROOT . "/member\">Member area</a>";
-	echo "<a href=\"" . ROOT . "/member/manual\">User manual</a>";
+	echo "<a href=\"" . ROOT . "/member/guide\">User guide</a>";
 }
 ?>
 			</div>

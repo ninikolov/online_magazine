@@ -61,7 +61,11 @@ class DBConnect {
 	 * @return Ambigous <boolean, PDOStatement> the result from the query
 	 */
 	function selectAllFrom($table) {
-		return $this->query ( "select * from " . $table );
+		$response = $this->query ( "select * from " . $table );
+		if (! $response) {
+			throw new DBException ();
+		}
+		return $response;
 	}
 	/**
 	 * Select statement on all elements with where clause.
@@ -77,7 +81,11 @@ class DBConnect {
 	 */
 	function selectAllFromWhere($table, $where_clause, $input_parameters = array()) {
 		$sql = "select * from `" . $table . "` where " . $where_clause;
-		return $this->query ( $sql, $input_parameters );
+		$response = $this->query ( $sql, $input_parameters );
+		if (! $response) {
+			throw new DBException ();
+		}
+		return $response;
 	}
 	/**
 	 * Select statement on all elements with an id constraint.
@@ -92,9 +100,13 @@ class DBConnect {
 	 * @return Ambigous <boolean, PDOStatement> the result from query
 	 */
 	function selectById($table, $id, $id_column = "id") {
-		return $this->query ( "select * from `" . $table . "` where `" . $id_column . "` = :id", array (
+		$response = $this->query ( "select * from `" . $table . "` where `" . $id_column . "` = :id", array (
 				":id" => $id 
 		) );
+		if (! $response) {
+			throw new DBException ();
+		}
+		return $response;
 	}
 	/**
 	 * Builds, prepares and sends an insert query.
@@ -112,7 +124,7 @@ class DBConnect {
 		$sql = "insert into " . $table . " (";
 		$sql_keys = array ();
 		foreach ( array_keys ( $array ) as $column ) {
-			$sql = $sql . " " . $column . ",";
+			$sql = $sql . " `" . $column . "`,";
 			array_push ( $sql_keys, ":" . $column );
 		}
 		$sql = rtrim ( $sql, "," ) . ") values (";
@@ -127,9 +139,14 @@ class DBConnect {
 				$sql = $sql . $key . "=" . $value;
 			}
 		}
-		// echo $sql;
-		// var_dump ( $input_params );
-		return $this->query ( $sql, $input_params );
+		/*
+		 * echo $sql; var_dump ( $input_params );
+		 */
+		$response = $this->query ( $sql, $input_params );
+		if (! $response) {
+			throw new DBException ();
+		}
+		return $response;
 	}
 	/**
 	 * Build, prepare and execute an update query.
@@ -157,7 +174,11 @@ class DBConnect {
 		}
 		$sql = rtrim ( $sql, "," ) . ";";
 		echo $sql;
-		return $this->query ( $sql, $params );
+		$response = $this->query ( $sql, $params );
+		if (! $response) {
+			throw new DBException ();
+		}
+		return $response;
 	}
 	/**
 	 * Build, prepare and execute a delete query.
@@ -173,10 +194,17 @@ class DBConnect {
 		$sql = "delete from `" . $table . "` where ";
 		$input_params = array ();
 		foreach ( array_keys ( $where_arr ) as $key ) {
-			$sql = $sql . "`" . $key . "`=:" . $key;
+			$sql = $sql . "`" . $key . "`=:" . $key . " and ";
 			array_push ( $input_params, ":" . $key );
 		}
-		return $this->query ( $sql, array_combine ( array_values ( $input_params ), array_values ( $where_arr ) ) );
+		echo $sql;
+		$sql = substr_replace ( $sql, "", - 4 );
+		echo $sql;
+		$response = $this->query ( $sql, array_combine ( array_values ( $input_params ), array_values ( $where_arr ) ) );
+		if (! $response) {
+			throw new DBException ();
+		}
+		return $response;
 	}
 	/**
 	 * Gets the id created from the last insert statement.
@@ -199,5 +227,10 @@ class DBConnect {
 			return false;
 		}
 		return true;
+	}
+}
+class DBException extends Exception {
+	function function_name() {
+		;
 	}
 }

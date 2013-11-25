@@ -21,6 +21,5 @@ class CommentMapper extends DBConnect {
 	}
 	public function submitComment($comment) {
 		$sql = $this->_buildInsertQuery ( $comment->serialize(), "comments" );
-		$this->query ( $sql );
 	}
 }

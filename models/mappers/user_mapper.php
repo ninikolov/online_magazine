@@ -13,6 +13,15 @@ class UserMapper extends DBConnect {
 		$results = $response->fetch ();
 		return ! $this->responseIsEmpty ( $results );
 	}
+	function createNewUser($username, $password) {
+		$outcome = $this->_buildInsertQuery ( array (
+				"name" => $username,
+				"password" => $password 
+		), "users" );
+		if (! $outcome) {
+			throw new UserMapperException ();
+		}
+	}
 	function getUserByAcc($username, $password) {
 		$response = $this->selectAllFromWhere ( "users", "`name`=:name and `password`=:password", array (
 				":name" => $username,
@@ -25,8 +34,15 @@ class UserMapper extends DBConnect {
 			return false;
 		}
 	}
+	function validUserCredentials($username, $password) {
+		$response = $this->selectAllFromWhere ( "users", "`name`=:name and `password`=:password", array (
+				":name" => $username,
+				":password" => $password 
+		) );
+		//$result = $response->fetch ();
+		return ! $this->responseIsEmpty ( $response );
+	}
 	function getUserByName($username) {
-		// $response = $this->query ( "select * from `users` where `name` = '" . $username . "'" );
 		$response = $this->selectAllFromWhere ( "users", "`name`=:name", array (
 				":name" => $username 
 		) );
@@ -37,8 +53,14 @@ class UserMapper extends DBConnect {
 			return false;
 		}
 	}
+	function usernameTaken($username) {
+		$response = $this->selectAllFromWhere ( "users", "`name`=:name", array (
+				":name" => $username 
+		) );
+		//$result = $response->fetch ();
+		return ! $this->responseIsEmpty ( $response );
+	}
 	function getUserById($id) {
-		// $response = $this->query ( "select * from `users` where `id` = '" . $id . "'" );
 		$response = $this->selectAllFromWhere ( "users", "`id`=:id", array (
 				":id" => $id 
 		) );
@@ -50,7 +72,6 @@ class UserMapper extends DBConnect {
 		}
 	}
 	function userHasLiked($article_id, $user_id) {
-		// $response = $this->query ( "select * from `likes` where `article_id` = '" . $article_id . "' and `user_id` = '" . $user_id . "'" );
 		$response = $this->selectAllFromWhere ( "likes", "`article_id`=:article_id and `user_id`=:user_id", array (
 				":article_id" => $article_id,
 				":user_id" => $user_id 
@@ -89,7 +110,6 @@ class UserMapper extends DBConnect {
 		), "users", array (
 				"id" => $user_id 
 		) );
-		$this->query ( $sql );
 	}
 	function getAuthorsOfComments($Comments) {
 		$Users = array ();
@@ -98,4 +118,6 @@ class UserMapper extends DBConnect {
 		}
 		return $Users;
 	}
+}
+class UserMapperException extends Exception {
 }

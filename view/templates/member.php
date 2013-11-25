@@ -5,15 +5,18 @@ if (empty ( $_SESSION ['LoggedIn'] ) || empty ( $_SESSION ['Username'] )) {
 	echo "<h2>You will soon be redirected to the login page</h2>";
 	echo "<meta http-equiv='refresh' content='2;" . ROOT . "' >";
 } else {
-	// echo "<h3>Welcome " . $_SESSION ['UserType'] . " " . $_SESSION ['Username'] . " !</h3>";
+	echo "<h4>Welcome to the member area " . $_SESSION ['UserType'] . " " . $_SESSION ['Username'] . " !</h4>";
 }
 
 displayMessage ( array (
 		"submit",
-		"edit" 
+		"edit",
+		"login",
+		"register",
+		"create_user",
+		"logout",
+		"promote_user" 
 ) );
-
-
 
 if (isWriter ()) {
 	// echo "<a href=". ROOT."/write>Write a new article</a>";
@@ -21,13 +24,14 @@ if (isWriter ()) {
 	echo "<h2>Writer Panel</h2>";
 	echo '<hr color="#5A8039" size="1px" />';
 	echo "<h3>Your articles: </h3>";
-	echo "<table> <tr><th>Title</th><th>Date</th><th>Status</th></tr>";
+	echo "<p>You will not be able to view your submissions until they are published. </p>";
+	echo "<table> <tr><th>Title</th><th>Date of submission</th><th>Status</th></tr>";
 	foreach ( $UserArticles as $article ) {
 		echo "<tr><td class=\"article\">";
 		echo "<a href=\"" . ROOT . "/article/view/" . $article->getId () . "\">" . htmlspecialchars ( $article->getTitle () ) . "</a>";
 		echo "</td><td>";
-		echo $article->getDate ();
-		echo "</td><td>";
+		echo $article->getDateTime ();
+		echo "</td><td><b>";
 		if ($article->getStatus () == "submitted") {
 			echo "Submitted";
 		} elseif ($article->getStatus () == "awaiting_changes") {
@@ -36,8 +40,11 @@ if (isWriter ()) {
 			echo "Under review";
 		} elseif ($article->getStatus () == "published") {
 			echo "Published";
+		} elseif ($article->getStatus () == "rejected") {
+			echo "Rejected";
 		}
-		echo "</td></tr>";
+		
+		echo "</b></td></tr>";
 	}
 	echo "</table>";
 	require_once 'write_form.php';
@@ -48,46 +55,62 @@ if (isEditor ()) {
 	echo "<h2>Editor Panel</h2>";
 	echo '<hr color="#5A8039" size="1px" />';
 	echo "<h3>Submitted articles waiting to be reviewed </h3>";
-	echo "<p>Visit those articles in order to edit them </p>";
-	echo "<table> <tr><th>Title</th><th>Date</th><th>Status</th></tr>";
+	echo "<p>Visit those articles in order to edit them or feature them on the homepage. </p>";
+	echo "<table> <tr><th>Title</th><th>Date of submission</th><th>Status</th></tr>";
 	foreach ( $SubmittedArticles as $article ) {
 		echo "<tr><td class=\"article\">";
 		echo "<a href=\"" . ROOT . "/article/view/" . $article->getId () . "\">" . htmlspecialchars ( $article->getTitle () ) . "</a>";
 		echo "</td><td>";
-		echo $article->getDate ();
-		echo "</td><td>";
+		echo $article->getDateTime ();
+		echo "</td><td><b>";
 		if ($article->getStatus () == "submitted") {
 			echo "Submitted";
 		} elseif ($article->getStatus () == "awaiting_changes") {
-			echo "Awaiting changes, go to article page";
+			echo "Sent for changes to writer";
 		} elseif ($article->getStatus () == "under_review") {
 			echo "Under review";
 		} elseif ($article->getStatus () == "published") {
 			echo "Published";
 		}
-		echo "</td></tr>";
+		echo "</b></td></tr>";
 	}
 	echo "</table>";
 	
 	echo "<h3>Your edit History: </h3>";
 	echo '<hr color="#5A8039" size="1px" />';
-	echo "<table> <tr><th>Title</th><th>Date</th><th>Status</th></tr>";
+	echo "<table> <tr><th>Title</th><th>Date of your last edit</th><th>Status</th></tr>";
 	foreach ( $EditHistory as $article ) {
 		echo "<tr><td class=\"article\">";
 		echo "<a href=\"" . ROOT . "/article/view/" . $article->getId () . "\">" . htmlspecialchars ( $article->getTitle () ) . "</a>";
 		echo "</td><td>";
-		echo $article->getDate ();
-		echo "</td><td>";
+		echo $article->getDateTime ();
+		echo "</td><td><b>";
 		if ($article->getStatus () == "submitted") {
 			echo "Submitted";
 		} elseif ($article->getStatus () == "awaiting_changes") {
-			echo "Awaiting changes, go to article page";
+			echo "Sent for changes to writer";
 		} elseif ($article->getStatus () == "under_review") {
 			echo "Under review";
 		} elseif ($article->getStatus () == "published") {
 			echo "Published";
+		} elseif ($article->getStatus () == "rejected") {
+			echo "Rejected";
 		}
-		echo "</td></tr>";
+		echo "</b></td></tr>";
+	}
+	echo "</table>";
+	
+	echo "<h3>Current featured articles:</h3>";
+	echo '<hr color="#5A8039" size="1px" />';
+	echo "<p>Featured articles as seen on the home page.</p>";
+	echo "<table> <tr><th>Title</th><th>Date of article submission</th></tr>";
+	foreach ( $FeaturedArticles as $article ) {
+		echo "<tr><td class=\"article\">";
+		echo "<a href=\"" . ROOT . "/article/view/" . $article->getId () . "\">" . htmlspecialchars ( $article->getTitle () ) . "</a>";
+		echo "</td><td>";
+		echo $article->getDate ();
+		echo "</td>";
+		echo "</tr>";
 	}
 	echo "</table>";
 	echo "</div>";
@@ -109,6 +132,8 @@ if (isPublisher ()) {
 
 if (isPublisher ()) {
 	?>
+	<h3>Subscriber management:</h3>
+	<p>You can promote a subscriber to become a writer or editor.</p>
 	<form method="post" action="/IAPT1/member/promote_user"
 		name="promoteform" id="promoteform">
 		<fieldset>

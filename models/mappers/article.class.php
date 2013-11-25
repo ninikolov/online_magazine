@@ -30,8 +30,8 @@ class Article extends ObjectMap {
 		return $this->image_path;
 	}
 	public function getLikesCount() {
-		//var_dump($this->likes_count);
-		if ($this->likes_count  == "") {
+		// var_dump($this->likes_count);
+		if ($this->likes_count == "") {
 			return '0';
 		} else {
 			return $this->likes_count;
@@ -41,10 +41,10 @@ class Article extends ObjectMap {
 		return $this->keywords;
 	}
 	public function getDate() {
-		return (new DateTime($this->date))->format ( 'Y-m-d' );
+		return (new DateTime ( $this->date ))->format ( 'Y-m-d' );
 	}
 	public function getDateTime() {
-		return new DateTime($this->date);
+		return (new DateTime ( $this->date ))->format ( 'Y-m-d @ H:i:s' );
 	}
 	public function getStatus() {
 		return $this->status;
@@ -59,7 +59,47 @@ class Article extends ObjectMap {
 		return $this->featured;
 	}
 	public function checkIfWriter() {
-		return strpos($this->getWriter(), $_SESSION ['Username']) !== false;
+		$user = getCurrUsername();
+		if ($user) {
+			return strpos ( $this->getWriter (), $user ) !== false;
+		} else {
+			return false;
+		}
+	}
+	public function getFormattedStatus() {
+		switch ($this->getStatus ()) {
+			case "submitted" :
+				return "Submitted";
+			
+			case "awaiting_changes" :
+				return "Awaiting changes";
+			
+			case "under_review" :
+				return "Under review";
+			
+			case "published" :
+				return "Published";
+			case "rejected" :
+				return "Rejected";
+		}
+	}
+	public function visibleArticle() {
+		return $this->isPublished () || ($this->isAwaitingChanges () && $this->checkIfWriter ());
+	}
+	public function isSubmitted() {
+		return $this->getStatus () == "submitted";
+	}
+	public function isUnderReview() {
+		return $this->getStatus () == "under_review";
+	}
+	public function isAwaitingChanges() {
+		return $this->getStatus () == "awaiting_changes";
+	}
+	public function isRejected() {
+		return $this->getStatus () == "rejected";
+	}
+	public function isPublished() {
+		return $this->getStatus () == "published";
 	}
 }
 /**

@@ -98,14 +98,13 @@ nav ul li {
 
 nav ul li a {
 	padding: 0px 9px 0 5px;
-	/* text-decoration: overline; */
 	color: #5A8039;
 	text-decoration: none;
 }
 
-}
 nav ul li a:hover {
-	color: #fff;
+	color: #75CC29;
+	text-decoration: underline;
 }
 
 nav ul li a:selected {
@@ -325,10 +324,16 @@ textarea {
 	
 }
 
-.member_panel table {
+.member_panel table,th,td {
 	width: 100%;
 	border-collapse: collapse;
-	border: 1px solid black;
+	border: 1px solid #5A8039;
+	min-width: 107px;
+}
+
+.member_panel th {
+	background-color: #5A8039;
+	color: white;
 }
 
 .member_panel a {
@@ -353,7 +358,16 @@ textarea {
 	margin-left: 769px;
 }
 
+#comment_form {
+	margin-top: 15px;
+}
+
 #article_body {
+	
+}
+
+.writer_panel button {
+	margin-top: 15px;
 }
 
 /*----------------------------*/

@@ -3,6 +3,7 @@ error_reporting ( E_ALL );
 ini_set ( 'display_errors', 'On' );
 mb_language ( 'uni' );
 mb_internal_encoding ( 'UTF-8' );
+date_default_timezone_set("Europe/London");
 define ( "DB_DSN", "mysql:host=127.0.0.1;dbname=cs_news" );
 define ( "DB_USERNAME", "root" );
 define ( "DB_PASSWORD", "" );

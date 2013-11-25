@@ -14,6 +14,9 @@ class ObjectMap {
 	 * @throws Exception if no key matching a class variable is found in the array
 	 */
 	public function __construct($row) {
+		if (!is_array($row)) {
+			throw new Exception ( "No rows returned from query or wrong model." );
+		}
 		// var_dump($row);
 		// Get the class variables for the current class.
 		$class_vars = get_class_vars ( get_class ( $this ) );

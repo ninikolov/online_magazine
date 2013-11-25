@@ -7,6 +7,20 @@ class MemberController extends Controller {
 		$this->_model->verifyAccountDetails ( $username, $password );
 		$this->setTemplate ( "templates/login.php" );
 	}
+	function register() {
+		$this->setTemplate ( "templates/register.php" );
+	}
+	function guide() {
+		$this->setTemplate ( "templates/user-guide.php" );
+	}
+	function create_user() {
+		$this->setTemplate ( "templates/register.php" );
+		if (! empty ( $_POST ['username'] ) && ! empty ( $_POST ['password'] )) {
+			$username = $_POST ['username'];
+			$password = $_POST ['password'];
+			$this->_model->registerNewUser ( $username, $password );
+		}
+	}
 	function submit() {
 		$data = $_POST ['article'];
 		if (array_key_exists ( "writer", $data )) {
@@ -22,6 +36,11 @@ class MemberController extends Controller {
 	function edit($article_id) {
 		$data = $_POST ['article'];
 		$data ["id"] = $article_id;
+		if (array_key_exists ( "writer", $data )) {
+			if (! in_array ( $_SESSION ['UserId'], $data ["writer"] ) && $_SESSION ['UserType'] == "writer") {
+				array_push ( $data ["writer"], $_SESSION ['UserId'] );
+			}
+		}
 		$this->_articleDataRequest ( $data, "update" );
 		header ( 'Location: ' . $_SERVER ['HTTP_REFERER'] );
 	}
@@ -68,7 +87,7 @@ class MemberController extends Controller {
 		$user_id = $_POST ["user"];
 		$new_type = $_POST ["newtype"];
 		$this->_model->promoteUser ( $user_id, $new_type );
-		/* header('Location: ' . $_SERVER['HTTP_REFERER']); */
+		header ( 'Location: ' . $_SERVER ['HTTP_REFERER'] );
 	}
 	function login() {
 		$this->setTemplate ( "templates/login.php" );

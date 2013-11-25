@@ -23,26 +23,57 @@ class ArticleModel extends Model {
 		} else {
 			$this->set ( "CanLike", false );
 		}
-		if (isEditor ()) {
+		if (isWriter ()) {
 			$this->set ( "WriterList", $this->userMapper->getAllOtherWriters () );
 		}
 	}
 	function likeArticle($id) {
-		$this->mapper->likeArticle ( $id );
+		try {
+			$this->mapper->likeArticle ( $id );
+			addMessage ( "success", "Liked article." );
+		} catch ( DBException $e ) {
+		}
+	}
+	function unlikeArticle($id) {
+		try {
+			$this->mapper->unlikeArticle ( $id );
+			addMessage ( "success", "Unliked article." );
+		} catch ( DBException $e ) {
+		}
 	}
 	function submitComment($comment) {
-		$this->commentMapper->submitComment ( $comment );
+		try {
+			$this->commentMapper->submitComment ( $comment );
+			addMessage ( "success", "Successfully submitted comment." );
+		} catch ( DBException $e ) {
+			addMessage ( "error", "Could not submit comment. " );
+		}
 	}
 	function setUnderReview($article_id) {
 		$this->mapper->setUnderReview ( $article_id );
 	}
 	function updateStatus($article_id, $status) {
-		$this->mapper->updateArticleStatus ( $article_id, $status );
+		try {
+			$this->mapper->updateArticleStatus ( $article_id, $status );
+			addMessage ( "success", "Article is now " . $status . "." );
+		} catch ( DBException $e ) {
+			addMessage ( "error", "Could not submit comment. " );
+		}
 	}
 	function featureArticle($article_id) {
-		$this->mapper->setFeaturedArticle($article_id);
+		try {
+			$this->mapper->setFeaturedArticle ( $article_id );
+			addMessage ( "success", "Article is now featured on the homepage." );
+		} catch ( DBException $e ) {
+			addMessage ( "error", "Could not feature article. " );
+		}
 	}
 	function unFeatureArticle($article_id) {
-		$this->mapper->unsetFeaturedArticle($article_id);
+		try {
+			$this->mapper->unsetFeaturedArticle ( $article_id );
+			addMessage ( "success", "Article is now removed from featured." );
+		} catch ( DBException $e ) {
+			addMessage ( "error", "Could not unfeature article. " );
+		}
 	}
 }

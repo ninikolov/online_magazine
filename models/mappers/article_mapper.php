@@ -25,7 +25,7 @@ class ArticleMapper extends DBConnect {
 	}
 	
 	// GET methods
-	public function fetchAll($table = "global_articles_view", $class = "Article") {
+	public function fetchAll($table = "global_published_articles_view", $class = "Article") {
 		$result = $this->selectAllFrom ( $table );
 		return $this->_mapResultsToArticles ( $result, $class );
 	}
@@ -88,7 +88,7 @@ class ArticleMapper extends DBConnect {
 	}
 	public function getUserArticles($user) {
 		$result = $this->selectAllFromWhere ( "global_articles_view", "writers like :wname", array (
-				":wname" => $user->getName () 
+				":wname" => "%" . $user->getName () . "%" 
 		) );
 		return $this->_mapResultsToArticles ( $result );
 	}
@@ -122,9 +122,7 @@ class ArticleMapper extends DBConnect {
 		}
 		unset ( $data ["writer"] );
 		unset ( $data ["keywords"] );
-		if (! $this->_buildInsertQuery ( $data, "articles" )) {
-			throw new ArticleMapperException ();
-		}
+		$this->_buildInsertQuery ( $data, "articles" );
 		/* echo $sql; */
 		/* $this->query ( $sql );  */
 		$article_id = $this->lastInsertId ();
@@ -135,18 +133,16 @@ class ArticleMapper extends DBConnect {
 		return $article_id;
 	}
 	function updateArticle($data, $article_id) {
-		var_dump ( $data );
+		//var_dump ( $data );
 		if (! empty ( $data ["keywords"] )) {
 			$keywords = $data ["keywords"];
 		}
 		unset ( $data ["keywords"] );
 		$writers = $data ["writer"];
 		unset ( $data ["writer"] );
-		if (! $this->_buildUpdateQuery ( $data, "articles", array (
+		$this->_buildUpdateQuery ( $data, "articles", array (
 				"id" => $article_id 
-		) )) {
-			throw new ArticleMapperException ();
-		}
+		) );
 		$this->deleteKeywords ( $article_id );
 		$this->deleteWriters ( $article_id );
 		if (! empty ( $keywords )) {
@@ -198,10 +194,17 @@ class ArticleMapper extends DBConnect {
 		) );
 	}
 	public function likeArticle($id) {
-		$this->_buildInsertQuery ( array (
+		$response = $this->_buildInsertQuery ( array (
 				"article_id" => $id,
 				"user_id" => $_SESSION ['UserId'] 
 		), "likes" );
+	}
+	public function unlikeArticle($id) {
+		//var_dump ( $_SESSION ['UserId'] );
+		$this->deleteStatement ( "likes", array (
+				"article_id" => $id,
+				"user_id" => $_SESSION ['UserId'] 
+		) );
 	}
 	public function setUnderReview($article_id) {
 		$this->updateArticleStatus ( $article_id, "under_review" );
@@ -214,7 +217,7 @@ class ArticleMapper extends DBConnect {
 		) );
 	}
 	function submitReview($data) {
-		var_dump ( $data );
+		//var_dump ( $data );
 		$rating = $data ["rating"];
 		unset ( $data ["rating"] );
 		$article_id = $this->submitNewArticle ( $data );
@@ -227,7 +230,7 @@ class ArticleMapper extends DBConnect {
 		), "ratings" );
 	}
 	function submitColumnArticle($data) {
-		var_dump ( $data );
+		// var_dump ( $data );
 		$column = $data ["column_article"];
 		unset ( $data ["column_article"] );
 		$article_id = $this->submitNewArticle ( $data );
@@ -273,9 +276,4 @@ class ArticleMapper extends DBConnect {
 				"id" => $article_id 
 		) );
 	}
-}
-/**
- * Simple exception for ArticleMapper
- */
-class ArticleMapperException extends Exception {
 }
