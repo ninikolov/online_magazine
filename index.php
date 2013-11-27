@@ -1,4 +1,6 @@
 <?php
+/* This is the root file of the application */
+
 // Configuration file
 require_once 'config.php';
 require_once 'util/util.php';
@@ -105,6 +107,5 @@ function getArguments() {
 	return $extra;
 }
 
-//
 redirect ();
 

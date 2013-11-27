@@ -1,10 +1,14 @@
 /*
- * 
+ * Main javascript file. 
  */
 
 /**
+ * Update the tips of a form.
  * 
  * @param t
+ *            tips container
+ * @param tips
+ *            the tips to display.
  */
 function updateTips(t, tips) {
 	tips.text(t).addClass("ui-state-highlight");
@@ -14,12 +18,18 @@ function updateTips(t, tips) {
 }
 
 /**
+ * Count the words in a chunk of text. Update the tips with a message if error.
  * 
  * @param target
+ *            the container of the text
  * @param name
+ *            label of container
  * @param min
+ *            minimum length of text
  * @param max
- * @returns {Boolean}
+ *            maximum length of text
+ * @returns {Boolean} true if the length of the text is between min and max,
+ *          false otherwise
  */
 function checkWordsCount(target, name, min, max, tips) {
 	var text = target.val().trim();
@@ -43,6 +53,7 @@ function checkWordsCount(target, name, min, max, tips) {
 }
 
 /**
+ * Check the length of characters of some text.
  * 
  * @param o
  * @param n
@@ -62,8 +73,10 @@ function checkLength(o, n, min, max, tips) {
 }
 
 /**
+ * Check if a file container has a file selected. Update tips otherwise.
  * 
  * @param o
+ *            the container
  * @returns {Boolean}
  */
 function checkImage(o, tips) {
@@ -77,6 +90,8 @@ function checkImage(o, tips) {
 }
 
 /**
+ * Check if a multi select has a value. Used for the writers in the write and
+ * edit forms.
  * 
  * @param o
  * @returns {Boolean}
@@ -91,6 +106,12 @@ function checkWriters(o, tips) {
 	}
 }
 
+/**
+ * Print an error message on the screen using jQuery. Fades out after some time.
+ * 
+ * @param message
+ *            the text to display
+ */
 function alert_error_message(message) {
 	$('#messages')
 			.append(
@@ -104,9 +125,16 @@ function alert_error_message(message) {
 			</p>\
 		</div>\
 	</div>');
-	$('#error-widget').show().delay(2000).fadeOut();
+	$('#error-widget').show().delay(3000).fadeOut();
 }
 
+/**
+ * Print a success/info message on the screen using jQuery. Fades out after some
+ * time.
+ * 
+ * @param message
+ *            the text of the message
+ */
 function alert_success_message(message) {
 	$('#messages')
 			.append(
@@ -120,5 +148,5 @@ function alert_success_message(message) {
 			</p>\
 		</div>\
 	</div>');
-	$('#error-widget').show().delay(2000).fadeOut();
+	$('#error-widget').show().delay(3000).fadeOut();
 }

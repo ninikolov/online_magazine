@@ -3,6 +3,7 @@
 require_once 'view/view.php';
 
 class LatestView extends View {
-	protected $template = "templates/latest.php";
+	// The 'latest' template
+	protected $template = "templates/latest_template.php";
 
 }

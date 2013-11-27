@@ -11,6 +11,8 @@ $( document ).ready(function() {
 	displayMessage ( array (
 			"like",
 			"unlike",
+			"dislike", 
+			"undislike",
 			"comment",
 			"update_status",
 			"feature",
@@ -30,7 +32,8 @@ $( document ).ready(function() {
 		echo "<b>Written by:</b>" . htmlspecialchars ( $Article->getWriter () ) . " on ";
 		echo "" . $Article->getDate () . ".";
 		echo "<b> Keywords: </b>" . htmlspecialchars ( $Article->getKeyWords () ) . "; <b>Likes:</b> ";
-		echo "" . htmlspecialchars ( $Article->getLikesCount () ) . "</p>";
+		echo "" . htmlspecialchars ( $Article->getLikesCount () ) . "  <b>Dislikes:</b>";
+		echo "" . htmlspecialchars ( $Article->getDislikesCount () ) . "</p>";
 		echo "<hr color=\"#5A8039\" size=\"1px\" />";
 		echo "<div id='panel'>";
 		echo "<img src=\"" . ROOT . $Article->getImage () . "\">";
@@ -79,21 +82,28 @@ $( document ).ready(function() {
 		echo "<p>" . $Article->getBody () . "</p>";
 		echo "</div>";
 		echo "<div id='user_metadata'>";
-		echo "<p>" . "<b>Likes:</b> " . $Article->getLikesCount () . "</p>";
+		echo "<p>" . "<b>Likes:</b> " . $Article->getLikesCount () . " <b>Dislikes:</b> " . $Article->getDislikesCount () . "</p>";
 		if (isSubscriber ()) {
-			if ($CanLike) {
+			if (!is_string($CanLike)) {
 				echo "<small><a href=\"" . ROOT . "/article/like/" . $Article->getId () . "\">" . "Like " . "</a></small>";
+				echo "<small><a href=\"" . ROOT . "/article/dislike/" . $Article->getId () . "\">" . "Dislike " . "</a></small>";
 			} else {
-				echo "<small><a href=\"" . ROOT . "/article/unlike/" . $Article->getId () . "\">" . "Unlike " . "</a></small>";
+				if ($CanLike == "dislike") {
+					echo "<small><a href=\"" . ROOT . "/article/undislike/" . $Article->getId () . "\">" . "Undislike " . "</a></small>";
+				} else if ($CanLike == "like") {					
+					echo "<small><a href=\"" . ROOT . "/article/unlike/" . $Article->getId () . "\">" . "Unlike " . "</a></small>";
+				}
 			}
 		}
 		
 		foreach ( $Comments as $key => $Comment ) {
 			$comment_tag = "Comment";
-			if ($Comment->isEditComment () && ! ($Article->checkIfWriter () || isEditor ())) {
-				continue;
-			} else {
-				$comment_tag = "Internal " . $comment_tag;
+			if ($Comment->isEditComment ()) {
+				if (! ($Article->checkIfWriter () || isEditor ())) {
+					continue;
+				} else {
+					$comment_tag = "Internal " . $comment_tag;
+				}
 			}
 			echo "<div class=\"comment\"><p><b>" . $comment_tag . ":</b> " . htmlspecialchars ( $Comment->getBody (), ENT_COMPAT | ENT_SUBSTITUTE, "UTF-8" ) . "</p>";
 			echo "<p><b>Written by: </b>" . $Users [$key]->getName () . " <b>on</b> " . $Comment->getDate () . "</p>";

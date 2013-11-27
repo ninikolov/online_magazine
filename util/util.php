@@ -55,10 +55,26 @@ function isPublisher() {
 function isValidColumn($column) {
 	return in_array ( $column, unserialize ( COLUMNS ) );
 }
-
+/**
+ * Get username of currently logged user
+ * 
+ * @return unknown|boolean
+ */
 function getCurrUsername() {
-	if (isset($_SESSION ['Username'])) {
+	if (isset ( $_SESSION ['Username'] )) {
 		return $_SESSION ['Username'];
+	} else {
+		return false;
+	}
+}
+/**
+ * Get id of currently logged user
+ * 
+ * @return unknown|boolean
+ */
+function getCurrUserId() {
+	if (isset ( $_SESSION ['UserId'] )) {
+		return $_SESSION ['UserId'];
 	} else {
 		return false;
 	}

@@ -12,9 +12,9 @@ displayMessage ( array (
 		"submit",
 		"edit",
 		"login",
+		"login_check",
 		"register",
 		"create_user",
-		"logout",
 		"promote_user" 
 ) );
 

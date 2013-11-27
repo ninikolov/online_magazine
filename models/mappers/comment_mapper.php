@@ -1,13 +1,22 @@
 <?php
 require_once 'db_connect.php';
-require_once 'comment.class.php';
-
-class CommentMapper extends DBConnect {
-	function __construct() {
-		$this->connect ();
+require_once 'comment.php';
+/**
+ * The Comment Mapper provides mappings from the database to Comment objects. 
+ */
+class CommentMapper {
+	private $_connection;
+	function __construct($connection) {
+		$this->_connection = $connection;
 	}
+	/**
+	 * Get all comments for an article. 
+	 * 
+	 * @param unknown $id the id of the article we're getting comments for. 
+	 * @return multitype: an array of Comment objects 
+	 */
 	public function getCommentsByArticleId($id) {
-		$response = $this->selectById ( "comments", $id, "articles_id" );
+		$response = $this->_connection->selectById ( "comments", $id, "article_id" );
 		$output = [ ];
 		while ( $row = $response->fetch () ) {
 			try {
@@ -16,10 +25,14 @@ class CommentMapper extends DBConnect {
 				echo $e->getMessage ();
 			}
 		}
-		// var_dump($output);
 		return $output;
 	}
-	public function submitComment($comment) {
-		$sql = $this->_buildInsertQuery ( $comment->serialize(), "comments" );
+	/**
+	 * Add a new comment for an article. 
+	 * 
+	 * @param unknown $data the data of the comment
+	 */
+	public function submitComment($data) {
+		$sql = $this->_connection->_buildInsertQuery ( $data, "comments" );
 	}
 }

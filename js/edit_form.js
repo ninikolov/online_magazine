@@ -1,5 +1,5 @@
 /*
- * 
+ * Javascript for the edit form. 
  */
 
 $(function() {

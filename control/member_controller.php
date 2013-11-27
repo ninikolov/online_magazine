@@ -1,26 +1,49 @@
 <?php
 require_once 'control/controller.php';
+/**
+ * The Member Controller handles most user related interaction, including
+ * adding/changing content, login, etc.
+ */
 class MemberController extends Controller {
+	/**
+	 * Check if login details coming from POST work.
+	 */
 	function login_check() {
-		$username = $_POST ['username'];
-		$password = $_POST ['password'];
-		$this->_model->verifyAccountDetails ( $username, $password );
-		$this->setTemplate ( "templates/login.php" );
+		if (! empty ( $_POST ['username'] ) && ! empty ( $_POST ['password'] )) {
+			$this->_model->verifyAccountDetails ( $_POST ['username'], $_POST ['password'] );
+		}
+		header ( 'Location: ' . $_SERVER ['HTTP_REFERER'] );
 	}
+	/**
+	 * Load the register template
+	 */
 	function register() {
 		$this->setTemplate ( "templates/register.php" );
 	}
+	/**
+	 * Load the user guide
+	 */
 	function guide() {
 		$this->setTemplate ( "templates/user-guide.php" );
 	}
+	/**
+	 * Create a new user of the magazine - Subscriber by default.
+	 *
+	 * Account details are optained through post.
+	 */
 	function create_user() {
-		$this->setTemplate ( "templates/register.php" );
-		if (! empty ( $_POST ['username'] ) && ! empty ( $_POST ['password'] )) {
-			$username = $_POST ['username'];
-			$password = $_POST ['password'];
-			$this->_model->registerNewUser ( $username, $password );
+		if (! loggedIn ()) {
+			if (! empty ( $_POST ['username'] ) && ! empty ( $_POST ['password'] )) {
+				$username = $_POST ['username'];
+				$password = $_POST ['password'];
+				$this->_model->registerNewUser ( $username, $password );
+			}
+			header ( 'Location: ' . $_SERVER ['HTTP_REFERER'] );
 		}
 	}
+	/**
+	 * Submit new article data, written by a writer.
+	 */
 	function submit() {
 		$data = $_POST ['article'];
 		if (array_key_exists ( "writer", $data )) {
@@ -33,6 +56,13 @@ class MemberController extends Controller {
 		$this->_articleDataRequest ( $data, "submit" );
 		header ( 'Location: ' . $_SERVER ['HTTP_REFERER'] );
 	}
+	/**
+	 * Submit article edit data.
+	 *
+	 *
+	 * @param unknown $article_id
+	 *        	the id of the article that's being edited
+	 */
 	function edit($article_id) {
 		$data = $_POST ['article'];
 		$data ["id"] = $article_id;
@@ -44,6 +74,14 @@ class MemberController extends Controller {
 		$this->_articleDataRequest ( $data, "update" );
 		header ( 'Location: ' . $_SERVER ['HTTP_REFERER'] );
 	}
+	/**
+	 * This is an internal method which unites the common functionality of submit and edit.
+	 *
+	 * It uploads an image to the image folder...
+	 *
+	 * @param unknown $data        	
+	 * @param unknown $type        	
+	 */
 	private function _articleDataRequest($data, $type) {
 		$image_path = $this->_uploadImage ();
 		if ($image_path) {
@@ -89,12 +127,22 @@ class MemberController extends Controller {
 		$this->_model->promoteUser ( $user_id, $new_type );
 		header ( 'Location: ' . $_SERVER ['HTTP_REFERER'] );
 	}
-	function login() {
-		$this->setTemplate ( "templates/login.php" );
-	}
+	/*
+	 * function login() { $this->setTemplate ( "templates/login.php" ); }
+	 */
 	function logout() {
-		$this->setTemplate ( "templates/logout.php" );
+		if (loggedIn ()) {
+			$_SESSION = array ();
+			session_destroy ();
+			addMessage ( "success", "You've logged out." );
+			header ( 'Location: ' . $_SERVER ['HTTP_REFERER'] );
+		}
 	}
+	/**
+	 * Store an image in the article_img folder on the server.
+	 *
+	 * @return NULL string path to the image, to be stored in the database for future reference, null if error
+	 */
 	private function _uploadImage() {
 		$abs_path = "";
 		if ($_FILES ["file"] ["error"] > 0) {

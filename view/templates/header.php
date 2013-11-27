@@ -11,10 +11,6 @@
 <script src="<?php echo JS_PATH ."/jquery-ui-1.10.3.custom.js"?>"></script>
 <script src="<?php echo JS_PATH ."/main.js" ?>"> </script>
 <script>
-/* $(function() {
-	$( "a" )
-	.button();
-});  */
 
 $(document).ready(function () {	
 	$('nav li').hover(
@@ -45,7 +41,7 @@ body {
 	right: 0;
 	width: 42%;
 	opacity: 0.07;
-	filter: alpha(opacity =   7);
+	filter: alpha(opacity =       7);
 	pointer-events: none;
 }
 
@@ -70,9 +66,52 @@ body {
 		<div id="topbar" class="center">
 <?php
 
+displayMessage ( array (
+		"login",
+		"logout",
+		"register",
+		"create_user",
+		"login_check",
+		"logout" 
+) );
+
 if (! array_key_exists ( 'LoggedIn', $_SESSION )) {
-	echo "<small><a href=\"" . ROOT . "/member/login\">Login</a></small>";
-	echo "<small><a href=\"" . ROOT . "/member/register\">Register</a></small>";
+	echo "<a id='login_button' >Login</a>";
+	?>
+	<div id="login_form" title="Login">
+				<script src="<?php echo JS_PATH ."/login_form.js" ?>"> </script>
+				<p class="validateTips">Please enter your login details below. All
+					form fields are required.</p>
+				<form id="submit_login" method="post"
+					action="<?php echo ROOT. "/member/login_check"?>" name="loginform"
+					id="loginform">
+					<fieldset>
+						<label for="username">Username:</label><input type="text"
+							name="username" id="username" /><br /> <label for="password">Password:</label><input
+							type="password" name="password" id="password" /><br />
+					</fieldset>
+				</form>
+			</div>
+	<?php
+	echo "<a id='register' >Create an account</a>";
+	?>
+	<div id="register_form" title="Create a new subscriber account">
+				<script src="<?php echo JS_PATH ."/register_form.js" ?>"> </script>
+				<p class="validateTips">Please enter your details below. All form
+					fields are required.</p>
+				<form id="submit_account" method="post"
+					action="<?php echo ROOT. "/member/create_user"?>" name="reg_form"
+					id="reg_form">
+					<fieldset>
+						<label for="username">Username:</label><input type="text"
+							name="username" id="username" /><br /> <label for="password">Password:</label><input
+							type="password" name="password" id="password" /><br />
+					</fieldset>
+				</form>
+			</div>
+			<div id="dialog">Click the create account button to confirm your
+				action.</div>
+	<?php
 } else {
 	echo "<span>Hello " . $_SESSION ['UserType'] . " <b>" . $_SESSION ['Username'] . "</b>!     </span>";
 	echo "<a href=\"" . ROOT . "/member/logout\">Logout</a>";

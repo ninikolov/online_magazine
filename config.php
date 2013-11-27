@@ -1,4 +1,6 @@
 <?php
+/* This is the config file of the application */
+
 error_reporting ( E_ALL );
 ini_set ( 'display_errors', 'On' );
 mb_language ( 'uni' );

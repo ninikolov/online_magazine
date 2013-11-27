@@ -2,11 +2,16 @@
 
 /**
  * The DBConnect class provides access to the database, as well as providing
- * some useful function for building and executing queries. 
+ * some useful functions for building and executing queries. It uses PDO and automatically 
+ * takes advantage of the prepared statements feature, doing the preparation automatically for the user. 
  */
 class DBConnect {
 	// The PDO Object
 	protected $_database;
+	function __construct() {
+		$this->connect ();
+	}
+	
 	/**
 	 * Initialize the connection to the database.
 	 */
@@ -113,11 +118,11 @@ class DBConnect {
 	 *
 	 *
 	 * @param unknown $array
-	 *        	array of column valued pairs to be used in the building of the query
+	 *        	array of key valued pairs to be used in the building of the query
 	 * @param unknown $table
 	 *        	the target table
 	 * @param unknown $on_duplicate
-	 *        	array of column valued pairs to be used when building the ON UPDATE clause
+	 *        	array of key valued pairs to be used when building the ON UPDATE clause
 	 * @return Ambigous <boolean, PDOStatement>
 	 */
 	function _buildInsertQuery($array, $table, $on_duplicate = array()) {
@@ -153,11 +158,11 @@ class DBConnect {
 	 *
 	 *
 	 * @param unknown $array
-	 *        	array of column valued pairs to be used in the building of the query
+	 *        	array of key valued pairs to be used in the building of the query
 	 * @param unknown $table
 	 *        	the target table
 	 * @param unknown $where
-	 *        	array of column valued pairs used in building the where clause of the update query
+	 *        	array of key valued pairs used in building the where clause of the update query
 	 * @return Ambigous <boolean, PDOStatement>
 	 */
 	function _buildUpdateQuery($array, $table, $where) {
@@ -187,7 +192,7 @@ class DBConnect {
 	 * @param unknown $table
 	 *        	the target table
 	 * @param unknown $where_arr
-	 *        	array of column valued pairs used in building the where clause of the delete query
+	 *        	array of key valued pairs used in building the where clause of the delete query
 	 * @return Ambigous <boolean, PDOStatement>
 	 */
 	function deleteStatement($table, $where_arr) {
@@ -229,8 +234,11 @@ class DBConnect {
 		return true;
 	}
 }
+/**
+ * A simple exception we can use to track DB problems.
+ * This is thrown when a PDO statement execution returns false,
+ * which is equivalent to say that a query was unsuccessful.
+ * It is not suppressing PDO exceptions, but merely used for tracking the status of our queries.
+ */
 class DBException extends Exception {
-	function function_name() {
-		;
-	}
 }

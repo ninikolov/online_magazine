@@ -1,4 +1,5 @@
-/**
+/*
+ * JS for the write form.
  * 
  */
 
